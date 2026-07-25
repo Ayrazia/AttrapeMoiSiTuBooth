@@ -8,6 +8,7 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "deploy": "bash scripts/deploy.sh",
     "astro": "astro"
   },
   "dependencies": {

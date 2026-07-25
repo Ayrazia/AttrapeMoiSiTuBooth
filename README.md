@@ -46,13 +46,36 @@ s'ajoute automatiquement à la modal. Voir [src/prestations/README.md](src/prest
 3. **Email** — vérifie l'adresse `attrape.moisi.tubooth@outlook.com` dans
    `src/data/site.js` (lecture approximative de la carte de visite).
 
-## Déployer
+## Déployer (GitHub Pages)
 
-Le site est 100 % statique : héberge le dossier `/dist` sur **Netlify**,
-**Vercel**, **GitHub Pages** ou tout hébergeur classique (OVH…).
-Sur Netlify/Vercel : commande de build `npm run build`, dossier `dist`.
+Le site est en ligne ici : **https://ayrazia.github.io/AttrapeMoiSiTuBooth/**
 
-Pense à renseigner l'URL finale dans `astro.config.mjs` (`site:`).
+Pour **publier une mise à jour** (par ex. après avoir ajouté des photos de
+prestations ou modifié un texte), une seule commande :
+
+```bash
+npm run deploy
+```
+
+Elle build le site et l'envoie sur la branche `gh-pages`. Le site est à jour
+en ~1 minute.
+
+> ℹ️ Le sous-dossier d'URL (`/AttrapeMoiSiTuBooth/`) est configuré dans
+> `astro.config.mjs` via `base`. Si tu ajoutes un jour un nom de domaine perso,
+> remets `base: '/'`.
+
+### (Optionnel) Déploiement automatique à chaque push
+
+Un workflow GitHub Actions est prêt dans `.github/workflows/deploy.yml`. Pour
+l'activer (déploiement auto sans lancer `npm run deploy`), autorise une fois le
+scope `workflow` puis pousse-le :
+
+```bash
+gh auth refresh -h github.com -s workflow
+git add .github && git commit -m "Ajout du déploiement automatique" && git push
+```
+
+Ensuite, dans **Settings → Pages**, choisis la source « GitHub Actions ».
 
 ## Crédits photos
 
