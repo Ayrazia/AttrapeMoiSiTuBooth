@@ -1,0 +1,16 @@
+{
+  "name": "attrape-moi-si-tu-booth",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Site vitrine — Attrape Moi Si Tu Booth, location de photobooth en Centre & Île-de-France",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^5.7.0"
+  }
+}

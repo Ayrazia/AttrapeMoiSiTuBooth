@@ -1,0 +1,229 @@
+---
+import { contact } from '../data/site.js';
+import Icon from './Icon.astro';
+---
+
+<section class="section contact" id="contact">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <span class="eyebrow">Contact</span>
+        <h2 class="section-title">Parlons de votre événement</h2>
+        <p class="section-intro">
+          Un projet, une date, une envie&nbsp;? Écrivez-nous&nbsp;: nous vous
+          répondons rapidement avec un devis personnalisé et sans engagement.
+        </p>
+
+        <ul class="contact-list">
+          <li>
+            <span class="ci-icon"><Icon name="phone" size={20} /></span>
+            <div>
+              <small>Téléphone</small>
+              <a href={contact.phoneHref}>{contact.phone}</a>
+            </div>
+          </li>
+          <li>
+            <span class="ci-icon"><Icon name="mail" size={20} /></span>
+            <div>
+              <small>Email</small>
+              <a href={`mailto:${contact.email}`}>{contact.email}</a>
+            </div>
+          </li>
+          <li>
+            <span class="ci-icon"><Icon name="pin" size={20} /></span>
+            <div>
+              <small>Zone d'intervention</small>
+              <span>{contact.zone}</span>
+            </div>
+          </li>
+          <li>
+            <span class="ci-icon"><Icon name="instagram" size={20} /></span>
+            <div>
+              <small>Instagram</small>
+              <a href={contact.instagramUrl} target="_blank" rel="noopener"
+                >@{contact.instagram}</a
+              >
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="contact-form-wrap reveal">
+        <!--
+          Ce formulaire est prêt à l'emploi avec Formspree (gratuit) :
+          1. Crée un compte sur https://formspree.io
+          2. Remplace VOTRE_ID ci-dessous par ton identifiant de formulaire.
+          Sans cette étape, les boutons Téléphone / Email fonctionnent déjà.
+        -->
+        <form
+          class="contact-form"
+          action="https://formspree.io/f/VOTRE_ID"
+          method="POST"
+        >
+          <div class="field">
+            <label for="name">Nom</label>
+            <input type="text" id="name" name="name" required placeholder="Votre nom" />
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" required placeholder="vous@email.com" />
+            </div>
+            <div class="field">
+              <label for="phone">Téléphone</label>
+              <input type="tel" id="phone" name="phone" placeholder="06 00 00 00 00" />
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="event">Type d'événement</label>
+              <select id="event" name="event">
+                <option>Mariage</option>
+                <option>Anniversaire</option>
+                <option>Baptême</option>
+                <option>Soirée privée</option>
+                <option>Séminaire / entreprise</option>
+                <option>Autre</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="date">Date souhaitée</label>
+              <input type="date" id="date" name="date" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="message">Votre message</label>
+            <textarea id="message" name="message" rows="4" placeholder="Parlez-nous de votre projet…"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary form-btn">Envoyer ma demande</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact {
+    background: var(--creme);
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  .contact-list {
+    list-style: none;
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .contact-list li {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .ci-icon {
+    flex: 0 0 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    background: var(--blanc);
+    border: 1px solid rgba(14, 13, 12, 0.1);
+    border-radius: 12px;
+    color: var(--or);
+  }
+
+  .contact-list small {
+    display: block;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--texte-doux);
+  }
+
+  .contact-list a,
+  .contact-list div > span {
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--noir);
+  }
+
+  .contact-list a:hover {
+    color: var(--or);
+  }
+
+  .contact-form {
+    background: var(--blanc);
+    border: 1px solid rgba(14, 13, 12, 0.08);
+    border-radius: var(--radius);
+    padding: clamp(1.6rem, 3vw, 2.4rem);
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    flex: 1;
+  }
+
+  .field-row {
+    display: flex;
+    gap: 1rem;
+  }
+
+  label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--texte-doux);
+  }
+
+  input,
+  select,
+  textarea {
+    font-family: var(--font-corps);
+    font-size: 0.95rem;
+    padding: 0.75rem 0.9rem;
+    border: 1.5px solid rgba(14, 13, 12, 0.15);
+    border-radius: 10px;
+    background: var(--creme);
+    color: var(--texte);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    width: 100%;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--or);
+    box-shadow: 0 0 0 3px rgba(200, 161, 90, 0.18);
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  .form-btn {
+    justify-content: center;
+    margin-top: 0.4rem;
+  }
+
+  @media (max-width: 820px) {
+    .contact-grid {
+      grid-template-columns: 1fr;
+    }
+    .field-row {
+      flex-direction: column;
+    }
+  }
+</style>

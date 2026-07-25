@@ -1,0 +1,604 @@
+---
+import { services, events } from '../data/site.js';
+import Icon from './Icon.astro';
+
+// Découverte automatique des photos : chaque sous-dossier de src/prestations/
+// correspond au "slug" d'une prestation. Dépose une image dans le dossier →
+// elle apparaît automatiquement dans la modal (rechargement à chaud en dev).
+const raw = import.meta.glob(
+  '../prestations/*/*.{jpg,jpeg,png,webp,avif,JPG,JPEG,PNG,WEBP,JPG}',
+  { eager: true, import: 'default', query: '?url' }
+);
+
+const photosBySlug = {};
+for (const [path, url] of Object.entries(raw)) {
+  const m = path.match(/\/prestations\/([^/]+)\//);
+  if (!m) continue;
+  (photosBySlug[m[1]] ??= []).push({ path, url });
+}
+// Tri par nom de fichier (préfixe tes fichiers 01-, 02-… pour ordonner)
+for (const slug of Object.keys(photosBySlug)) {
+  photosBySlug[slug].sort((a, b) => a.path.localeCompare(b.path));
+  photosBySlug[slug] = photosBySlug[slug].map((o) => o.url);
+}
+
+// Données exposées au script client
+const prestationsData = Object.fromEntries(
+  services.map((s) => [s.slug, photosBySlug[s.slug] ?? []])
+);
+---
+
+<section class="section services" id="prestations">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Nos prestations</span>
+      <h2 class="section-title">Une animation pour chaque occasion</h2>
+      <p class="section-intro">
+        Du photobooth intemporel aux animations les plus originales, nous
+        composons l'expérience qui rendra votre événement inoubliable.
+        <br /><strong>Cliquez sur une animation</strong> pour découvrir les photos.
+      </p>
+    </div>
+
+    <div class="grid">
+      {
+        services.map((s) => {
+          const count = (photosBySlug[s.slug] ?? []).length;
+          return (
+            <article
+              class={`card reveal is-clickable ${s.featured ? 'card-featured' : ''}`}
+              role="button"
+              tabindex="0"
+              data-slug={s.slug}
+              data-title={s.title}
+              data-desc={s.description}
+              aria-label={`Voir les photos : ${s.title}`}
+            >
+              {s.featured && <span class="badge">Le plus demandé</span>}
+              <div class="card-icon"><Icon name={s.icon} size={30} /></div>
+              <h3 class="card-title">{s.title}</h3>
+              <p class="card-desc">{s.description}</p>
+              <ul class="card-features">
+                {s.features.map((f) => (
+                  <li>{f}</li>
+                ))}
+              </ul>
+              <span class="card-cta">
+                <Icon name="camera" size={16} />
+                {count > 0 ? `Voir les ${count} photos` : 'Photos bientôt disponibles'}
+                <span class="card-cta-arrow">→</span>
+              </span>
+            </article>
+          );
+        })
+      }
+    </div>
+
+    <div class="events reveal">
+      <p class="events-label">On intervient pour&nbsp;:</p>
+      <ul class="events-list">
+        {
+          events.map((e) => (
+            <li>
+              <Icon name={e.icon} size={17} />
+              {e.label}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+
+  {/* Modal galerie par prestation */}
+  <div class="pmodal" id="pmodal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="pmodal-title">
+    <div class="pmodal-card">
+      <button class="pmodal-close" id="pmodal-close" aria-label="Fermer">✕</button>
+
+      <div class="pmodal-head">
+        <div class="pmodal-icon" id="pmodal-icon"></div>
+        <div>
+          <h3 id="pmodal-title"></h3>
+          <p id="pmodal-desc"></p>
+        </div>
+      </div>
+
+      <div class="pmodal-viewer">
+        <button class="pmodal-arrow prev" id="pmodal-prev" aria-label="Photo précédente">‹</button>
+        <div class="pmodal-stage">
+          <img id="pmodal-main" src="" alt="" />
+          <p class="pmodal-empty" id="pmodal-empty">
+            Photos bientôt disponibles pour cette animation.
+          </p>
+          <span class="pmodal-counter" id="pmodal-counter"></span>
+        </div>
+        <button class="pmodal-arrow next" id="pmodal-next" aria-label="Photo suivante">›</button>
+      </div>
+
+      <div class="pmodal-thumbs" id="pmodal-thumbs"></div>
+    </div>
+  </div>
+
+  <script type="application/json" id="prestations-data" set:html={JSON.stringify(prestationsData)}></script>
+</section>
+
+<style>
+  .services {
+    background: var(--creme);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.4rem;
+  }
+
+  .card {
+    background: var(--blanc);
+    border: 1px solid rgba(14, 13, 12, 0.07);
+    border-radius: var(--radius);
+    padding: 2rem 1.8rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition), box-shadow var(--transition),
+      border-color var(--transition);
+  }
+
+  .card.is-clickable {
+    cursor: pointer;
+  }
+
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow);
+    border-color: rgba(200, 161, 90, 0.4);
+  }
+
+  .card:focus-visible {
+    outline: 2px solid var(--or);
+    outline-offset: 3px;
+  }
+
+  .card-featured {
+    background: var(--noir);
+    color: var(--creme);
+    border-color: var(--noir);
+  }
+
+  .card-featured .card-desc {
+    color: rgba(246, 241, 233, 0.78);
+  }
+
+  .card-featured .card-features li {
+    color: rgba(246, 241, 233, 0.9);
+  }
+
+  .card-featured .card-features li::before {
+    color: var(--or-clair);
+  }
+
+  .badge {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.2rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--noir);
+    background: var(--or-clair);
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+  }
+
+  .card-icon {
+    width: 54px;
+    height: 54px;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    background: rgba(200, 161, 90, 0.12);
+    color: var(--or);
+    margin-bottom: 1.3rem;
+  }
+
+  .card-featured .card-icon {
+    background: rgba(246, 241, 233, 0.1);
+    color: var(--or-clair);
+  }
+
+  .card-title {
+    font-size: 1.35rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .card-desc {
+    color: var(--texte-doux);
+    font-size: 0.97rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .card-features {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1rem;
+    margin-bottom: 1.4rem;
+  }
+
+  .card-features li {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--texte);
+    display: flex;
+    align-items: center;
+  }
+
+  .card-features li::before {
+    content: '✦';
+    color: var(--or);
+    margin-right: 0.4rem;
+    font-size: 0.75rem;
+  }
+
+  .card-cta {
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--or);
+    padding-top: 0.4rem;
+  }
+
+  .card-featured .card-cta {
+    color: var(--or-clair);
+  }
+
+  .card-cta-arrow {
+    transition: transform 0.3s ease;
+  }
+
+  .card:hover .card-cta-arrow {
+    transform: translateX(4px);
+  }
+
+  /* --- Événements --- */
+  .events {
+    margin-top: 3.5rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid rgba(14, 13, 12, 0.1);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 2rem;
+  }
+
+  .events-label {
+    font-family: var(--font-titre);
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+
+  .events-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+  }
+
+  .events-list li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--blanc);
+    border: 1px solid rgba(14, 13, 12, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .events-list li :global(.icon) {
+    color: var(--or);
+  }
+
+  /* ============================================================
+     Modal prestation
+     ============================================================ */
+  .pmodal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(10, 9, 8, 0.9);
+    backdrop-filter: blur(6px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 4vw;
+  }
+
+  .pmodal.open {
+    display: flex;
+  }
+
+  .pmodal-card {
+    background: var(--creme);
+    border-radius: 18px;
+    width: min(920px, 96vw);
+    max-height: 92vh;
+    overflow-y: auto;
+    padding: clamp(1.4rem, 3vw, 2.4rem);
+    position: relative;
+    animation: pmIn 0.35s ease;
+  }
+
+  @keyframes pmIn {
+    from { opacity: 0; transform: translateY(14px) scale(0.98); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .pmodal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(14, 13, 12, 0.06);
+    color: var(--noir);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.25s ease, transform 0.25s ease;
+    z-index: 2;
+  }
+
+  .pmodal-close:hover {
+    background: var(--noir);
+    color: var(--creme);
+    transform: rotate(90deg);
+  }
+
+  .pmodal-head {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-right: 3rem;
+  }
+
+  .pmodal-icon {
+    width: 52px;
+    height: 52px;
+    flex: none;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    background: rgba(200, 161, 90, 0.14);
+    color: var(--or);
+  }
+
+  .pmodal-head h3 {
+    font-size: clamp(1.3rem, 3vw, 1.7rem);
+  }
+
+  .pmodal-head p {
+    color: var(--texte-doux);
+    font-size: 0.95rem;
+    margin-top: 0.2rem;
+  }
+
+  .pmodal-viewer {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .pmodal-stage {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    aspect-ratio: 4 / 3;
+    background: var(--noir);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .pmodal-stage img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .pmodal-empty {
+    position: absolute;
+    inset: 0;
+    display: none;
+    place-items: center;
+    text-align: center;
+    padding: 2rem;
+    color: rgba(246, 241, 233, 0.75);
+    font-size: 0.95rem;
+  }
+
+  .pmodal-stage.empty img { display: none; }
+  .pmodal-stage.empty .pmodal-empty { display: grid; }
+
+  .pmodal-counter {
+    position: absolute;
+    bottom: 0.7rem;
+    right: 0.7rem;
+    background: rgba(10, 9, 8, 0.6);
+    color: var(--creme);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+  }
+
+  .pmodal-arrow {
+    flex: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(14, 13, 12, 0.15);
+    background: var(--blanc);
+    color: var(--noir);
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+  }
+
+  .pmodal-arrow:hover {
+    background: var(--or);
+    color: var(--noir);
+    transform: scale(1.06);
+  }
+
+  .pmodal-thumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1rem;
+  }
+
+  /* Les miniatures sont créées en JS → styles rendus globaux pour qu'ils
+     s'appliquent (sinon elles s'affichent à leur taille réelle). */
+  .pmodal-thumbs :global(button) {
+    width: 76px;
+    height: 60px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    padding: 0;
+    cursor: pointer;
+    background: none;
+    transition: border-color 0.25s ease, opacity 0.25s ease;
+    opacity: 0.6;
+    flex: none;
+  }
+
+  .pmodal-thumbs :global(button img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .pmodal-thumbs :global(button.active),
+  .pmodal-thumbs :global(button:hover) {
+    opacity: 1;
+    border-color: var(--or);
+  }
+
+  @media (max-width: 560px) {
+    .pmodal-arrow { display: none; }
+    .pmodal-thumbs :global(button) { width: 60px; height: 48px; }
+  }
+</style>
+
+<script>
+  const data = JSON.parse(
+    document.getElementById('prestations-data')?.textContent || '{}'
+  );
+
+  const modal = document.getElementById('pmodal');
+  const elIcon = document.getElementById('pmodal-icon');
+  const elTitle = document.getElementById('pmodal-title');
+  const elDesc = document.getElementById('pmodal-desc');
+  const elMain = document.getElementById('pmodal-main');
+  const elStage = elMain.parentElement;
+  const elCounter = document.getElementById('pmodal-counter');
+  const elThumbs = document.getElementById('pmodal-thumbs');
+  const btnClose = document.getElementById('pmodal-close');
+  const btnPrev = document.getElementById('pmodal-prev');
+  const btnNext = document.getElementById('pmodal-next');
+
+  let photos = [];
+  let index = 0;
+
+  function render(i) {
+    if (!photos.length) return;
+    index = (i + photos.length) % photos.length;
+    elMain.src = photos[index];
+    elCounter.textContent = `${index + 1} / ${photos.length}`;
+    elThumbs.querySelectorAll('button').forEach((b, k) =>
+      b.classList.toggle('active', k === index)
+    );
+    const active = elThumbs.children[index];
+    if (active) active.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  }
+
+  function open(card) {
+    const slug = card.dataset.slug;
+    photos = data[slug] || [];
+    elTitle.textContent = card.dataset.title || '';
+    elDesc.textContent = card.dataset.desc || '';
+    const icon = card.querySelector('.card-icon');
+    elIcon.innerHTML = icon ? icon.innerHTML : '';
+
+    // Miniatures
+    elThumbs.innerHTML = '';
+    photos.forEach((src, k) => {
+      const b = document.createElement('button');
+      b.setAttribute('aria-label', `Photo ${k + 1}`);
+      const img = document.createElement('img');
+      img.src = src;
+      img.loading = 'lazy';
+      img.alt = '';
+      b.appendChild(img);
+      b.addEventListener('click', () => render(k));
+      elThumbs.appendChild(b);
+    });
+
+    const empty = photos.length === 0;
+    const multiple = photos.length > 1;
+    elStage.classList.toggle('empty', empty);
+    // Compteur, flèches et miniatures utiles seulement s'il y a plusieurs photos
+    elCounter.style.display = multiple ? '' : 'none';
+    btnPrev.style.display = multiple ? '' : 'none';
+    btnNext.style.display = multiple ? '' : 'none';
+    elThumbs.style.display = multiple ? '' : 'none';
+    if (!empty) render(0);
+    else elMain.removeAttribute('src');
+
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function close() {
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll('.card[data-slug]').forEach((card) => {
+    card.addEventListener('click', () => open(card));
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        open(card);
+      }
+    });
+  });
+
+  btnClose?.addEventListener('click', close);
+  btnPrev?.addEventListener('click', () => render(index - 1));
+  btnNext?.addEventListener('click', () => render(index + 1));
+  elMain?.addEventListener('click', () => photos.length > 1 && render(index + 1));
+  modal?.addEventListener('click', (e) => {
+    if (e.target === modal) close();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (!modal.classList.contains('open')) return;
+    if (e.key === 'Escape') close();
+    if (e.key === 'ArrowLeft') render(index - 1);
+    if (e.key === 'ArrowRight') render(index + 1);
+  });
+</script>

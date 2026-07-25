@@ -1,0 +1,126 @@
+---
+import { testimonials, references } from '../data/site.js';
+---
+
+<section class="section testimonials" id="avis">
+  <div class="container">
+    <div class="section-head center reveal">
+      <span class="eyebrow">Ils nous ont fait confiance</span>
+      <h2 class="section-title">Vos sourires, notre récompense</h2>
+    </div>
+
+    <div class="quotes">
+      {
+        testimonials.map((t) => (
+          <figure class="quote reveal">
+            <div class="stars" aria-label="5 étoiles sur 5">★★★★★</div>
+            <blockquote>“{t.quote}”</blockquote>
+            <figcaption>
+              <strong>{t.author}</strong>
+              <span>{t.event}</span>
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+
+    <div class="refs reveal">
+      <p class="refs-label">Déjà présents dans ces lieux&nbsp;:</p>
+      <ul>
+        {references.map((r) => <li>{r}</li>)}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .testimonials {
+    background: var(--noir);
+    color: var(--creme);
+  }
+
+  .testimonials .section-title {
+    color: var(--creme);
+  }
+
+  .quotes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.4rem;
+  }
+
+  .quote {
+    background: var(--noir-soft);
+    border: 1px solid rgba(246, 241, 233, 0.1);
+    border-radius: var(--radius);
+    padding: 2rem 1.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .stars {
+    color: var(--or-clair);
+    letter-spacing: 0.15em;
+    font-size: 0.95rem;
+  }
+
+  blockquote {
+    font-family: var(--font-titre);
+    font-size: 1.12rem;
+    line-height: 1.5;
+    color: rgba(246, 241, 233, 0.94);
+    flex: 1;
+  }
+
+  figcaption {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid rgba(246, 241, 233, 0.12);
+    padding-top: 1rem;
+  }
+
+  figcaption strong {
+    font-weight: 600;
+  }
+
+  figcaption span {
+    font-size: 0.85rem;
+    color: var(--or-clair);
+  }
+
+  .refs {
+    margin-top: 3.2rem;
+    text-align: center;
+  }
+
+  .refs-label {
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(246, 241, 233, 0.55);
+    margin-bottom: 1.2rem;
+  }
+
+  .refs ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.8rem 2rem;
+  }
+
+  .refs li {
+    font-family: var(--font-titre);
+    font-size: 1.05rem;
+    color: rgba(246, 241, 233, 0.85);
+    position: relative;
+  }
+
+  .refs li:not(:last-child)::after {
+    content: '·';
+    position: absolute;
+    right: -1.05rem;
+    color: var(--or);
+  }
+</style>

@@ -1,0 +1,239 @@
+---
+import { brand, contact } from '../data/site.js';
+---
+
+<section class="hero" id="accueil">
+  <div class="hero-grid">
+    <div class="hero-content">
+      <span class="eyebrow hero-eyebrow">{contact.zone}</span>
+      <h1 class="hero-title">
+        Capturez vos plus<br />beaux souvenirs
+      </h1>
+      <p class="hero-sub">
+        {brand.baseline} Photobooth, livre audio et animations originales pour
+        mariages, anniversaires, baptêmes et soirées d'entreprise.
+      </p>
+      <div class="hero-actions">
+        <a href="#contact" class="btn btn-light">Demander un devis</a>
+        <a href="#galerie" class="btn btn-ghost hero-ghost">Voir la galerie</a>
+      </div>
+
+      <ul class="hero-stats">
+        <li><strong>15+</strong><span>événements animés</span></li>
+        <li><strong>5★</strong><span>lieux d'exception</span></li>
+        <li><strong>100%</strong><span>sourires garantis</span></li>
+      </ul>
+    </div>
+
+    <div class="hero-photo">
+      <img
+        src={`${import.meta.env.BASE_URL}images/hero.jpg`}
+        alt="Photobooth premium installé dans le hall d'un hôtel de prestige"
+      />
+      <span class="hero-photo-fade" aria-hidden="true"></span>
+    </div>
+  </div>
+
+  <div class="hero-overlay" aria-hidden="true"></div>
+
+  <a href="#prestations" class="scroll-cue" aria-label="Descendre">
+    <span></span>
+  </a>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    background: var(--noir);
+    color: var(--creme);
+    overflow: hidden;
+  }
+
+  .hero-grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1.02fr 0.98fr;
+    min-height: 100svh;
+  }
+
+  /* --- Colonne texte --- */
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 110px clamp(1.4rem, 3.5vw, 3rem) 70px
+      max(1.4rem, calc((100vw - 1180px) / 2));
+    max-width: 760px;
+    margin-left: auto;
+  }
+
+  .hero-eyebrow {
+    color: var(--or-clair);
+  }
+
+  .hero-title {
+    font-size: clamp(2.6rem, 5.2vw, 4.6rem);
+    color: var(--creme);
+    margin-bottom: 1.4rem;
+  }
+
+  .hero-sub {
+    font-size: clamp(1.05rem, 1.6vw, 1.2rem);
+    max-width: 520px;
+    color: rgba(246, 241, 233, 0.82);
+    margin-bottom: 2.2rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .hero-ghost {
+    border-color: rgba(246, 241, 233, 0.5);
+    color: var(--creme);
+  }
+  .hero-ghost:hover {
+    background: var(--creme);
+    color: var(--noir);
+    border-color: var(--creme);
+  }
+
+  .hero-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(1.6rem, 4vw, 3rem);
+    list-style: none;
+  }
+
+  .hero-stats li {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hero-stats strong {
+    font-family: var(--font-titre);
+    font-size: 2rem;
+    color: var(--or-clair);
+    line-height: 1;
+  }
+
+  .hero-stats span {
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    color: rgba(246, 241, 233, 0.75);
+    margin-top: 0.3rem;
+  }
+
+  /* --- Colonne photo --- */
+  .hero-photo {
+    position: relative;
+  }
+
+  .hero-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  /* Fond dégradé pour fondre le bord gauche de la photo dans la colonne texte */
+  .hero-photo-fade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      var(--noir) 0%,
+      rgba(14, 13, 12, 0) 24%
+    );
+  }
+
+  /* Overlay global : utilisé seulement en mobile (photo en fond plein écran) */
+  .hero-overlay {
+    display: none;
+  }
+
+  .scroll-cue {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    width: 26px;
+    height: 42px;
+    border: 2px solid rgba(246, 241, 233, 0.55);
+    border-radius: 999px;
+    display: flex;
+    justify-content: center;
+    padding-top: 8px;
+  }
+
+  .scroll-cue span {
+    width: 4px;
+    height: 8px;
+    border-radius: 4px;
+    background: var(--creme);
+    animation: cue 1.6s ease-in-out infinite;
+  }
+
+  @keyframes cue {
+    0% { opacity: 0; transform: translateY(-4px); }
+    50% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(10px); }
+  }
+
+  /* ============================================================
+     Mobile / tablette : photo en fond plein écran, texte par-dessus
+     ============================================================ */
+  @media (max-width: 900px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      justify-content: flex-end;
+      max-width: 100%;
+      margin-left: 0;
+      padding: 120px clamp(1.4rem, 6vw, 2.5rem) 60px;
+    }
+
+    .hero-photo {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .hero-photo img {
+      object-position: center 32%;
+    }
+
+    .hero-photo-fade {
+      display: none;
+    }
+
+    .hero-overlay {
+      display: block;
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(
+        180deg,
+        rgba(14, 13, 12, 0.55) 0%,
+        rgba(14, 13, 12, 0.55) 35%,
+        rgba(14, 13, 12, 0.9) 100%
+      );
+    }
+  }
+
+  @media (max-width: 520px) {
+    .scroll-cue {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,222 @@
+---
+import { gallery, contact } from '../data/site.js';
+import Icon from './Icon.astro';
+---
+
+<section class="section gallery" id="galerie">
+  <div class="container">
+    <div class="section-head center reveal">
+      <span class="eyebrow">La galerie</span>
+      <h2 class="section-title">Des moments capturés sur le vif</h2>
+      <p class="section-intro">
+        Un aperçu de nos animations en conditions réelles. Retrouvez tout notre
+        univers sur Instagram
+        <a href={contact.instagramUrl} target="_blank" rel="noopener" class="ig-inline">
+          @{contact.instagram}</a>.
+      </p>
+    </div>
+
+    <div class="masonry">
+      {
+        gallery.map((img, i) => (
+          <button
+            class="tile reveal"
+            data-src={img.src}
+            data-alt={img.alt}
+            style={`transition-delay:${(i % 4) * 60}ms`}
+            aria-label={`Agrandir : ${img.alt}`}
+          >
+            <img src={img.src} alt={img.alt} loading="lazy" />
+            <span class="tile-zoom" aria-hidden="true"><Icon name="expand" size={26} /></span>
+          </button>
+        ))
+      }
+    </div>
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <button class="lb-close" id="lb-close" aria-label="Fermer">✕</button>
+    <button class="lb-nav lb-prev" id="lb-prev" aria-label="Précédent">‹</button>
+    <img class="lb-img" id="lb-img" src="" alt="" />
+    <button class="lb-nav lb-next" id="lb-next" aria-label="Suivant">›</button>
+  </div>
+</section>
+
+<style>
+  .gallery {
+    background: var(--creme-2);
+  }
+
+  .masonry {
+    columns: 4 240px;
+    column-gap: 1rem;
+  }
+
+  .tile {
+    display: block;
+    width: 100%;
+    margin: 0 0 1rem;
+    padding: 0;
+    border: none;
+    background: none;
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    break-inside: avoid;
+    box-shadow: 0 8px 24px -16px rgba(14, 13, 12, 0.5);
+  }
+
+  .tile img {
+    width: 100%;
+    height: auto;
+    transition: transform 0.6s ease, filter 0.6s ease;
+  }
+
+  .tile-zoom {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    color: var(--creme);
+    background: rgba(14, 13, 12, 0.35);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .tile:hover img {
+    transform: scale(1.06);
+  }
+  .tile:hover .tile-zoom,
+  .tile:focus-visible .tile-zoom {
+    opacity: 1;
+  }
+
+  .ig-inline {
+    color: var(--or);
+    font-weight: 600;
+  }
+  .ig-inline:hover {
+    text-decoration: underline;
+  }
+
+  /* Lightbox */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(10, 9, 8, 0.92);
+    backdrop-filter: blur(6px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 4vw;
+  }
+
+  .lightbox.open {
+    display: flex;
+  }
+
+  .lb-img {
+    max-width: min(90vw, 720px);
+    max-height: 86vh;
+    width: auto;
+    border-radius: 8px;
+    box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8);
+    animation: lbIn 0.35s ease;
+  }
+
+  @keyframes lbIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .lb-close,
+  .lb-nav {
+    position: absolute;
+    background: rgba(246, 241, 233, 0.12);
+    border: 1px solid rgba(246, 241, 233, 0.25);
+    color: var(--creme);
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background 0.25s ease, transform 0.25s ease;
+  }
+
+  .lb-close {
+    top: 22px;
+    right: 22px;
+    width: 46px;
+    height: 46px;
+    font-size: 1.2rem;
+  }
+
+  .lb-nav {
+    top: 50%;
+    transform: translateY(-50%);
+    width: 52px;
+    height: 52px;
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .lb-prev { left: 3vw; }
+  .lb-next { right: 3vw; }
+
+  .lb-close:hover,
+  .lb-nav:hover {
+    background: var(--or);
+    color: var(--noir);
+  }
+  .lb-nav:hover { transform: translateY(-50%) scale(1.08); }
+
+  @media (max-width: 600px) {
+    .lb-nav { width: 42px; height: 42px; font-size: 1.5rem; }
+  }
+</style>
+
+<script>
+  const tiles = Array.from(document.querySelectorAll('.tile'));
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lb-img');
+  const closeBtn = document.getElementById('lb-close');
+  const prevBtn = document.getElementById('lb-prev');
+  const nextBtn = document.getElementById('lb-next');
+  let current = 0;
+
+  const show = (i) => {
+    current = (i + tiles.length) % tiles.length;
+    const t = tiles[current];
+    lbImg.setAttribute('src', t.dataset.src);
+    lbImg.setAttribute('alt', t.dataset.alt || '');
+  };
+
+  const open = (i) => {
+    show(i);
+    lb.classList.add('open');
+    lb.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  };
+
+  const close = () => {
+    lb.classList.remove('open');
+    lb.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  };
+
+  tiles.forEach((t, i) => t.addEventListener('click', () => open(i)));
+  closeBtn?.addEventListener('click', close);
+  prevBtn?.addEventListener('click', () => show(current - 1));
+  nextBtn?.addEventListener('click', () => show(current + 1));
+  lb?.addEventListener('click', (e) => {
+    if (e.target === lb) close();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape') close();
+    if (e.key === 'ArrowLeft') show(current - 1);
+    if (e.key === 'ArrowRight') show(current + 1);
+  });
+</script>
