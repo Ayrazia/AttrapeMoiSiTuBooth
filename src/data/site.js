@@ -77,19 +77,20 @@ export const events = [
 // Préfixe le chemin avec la base du site (gère le sous-dossier GitHub Pages)
 const asset = (p) => `${import.meta.env.BASE_URL}${p}`;
 
-// Galerie — images téléchargées depuis le compte Instagram (@attrape.moisi.tubooth)
+// Galerie — sélection de photos réelles d'événements
 export const gallery = [
-  { src: asset('images/gallery/photobooth-ambiance.jpg'), alt: 'Photobooth en pleine soirée, sourires et bonne humeur' },
-  { src: asset('images/gallery/mariage-chateau.jpg'), alt: 'Photobooth vintage au Château de Cossoles pour un mariage' },
-  { src: asset('images/gallery/hotel-5-etoiles.jpg'), alt: "Photobooth installé dans un hôtel 5 étoiles à Paris" },
-  { src: asset('images/gallery/soiree-potes.jpg'), alt: 'Bande de potes et accessoires devant le photobooth' },
-  { src: asset('images/gallery/petanque.jpg'), alt: 'Terrain de pétanque mobile en intérieur' },
-  { src: asset('images/gallery/livre-audio.jpg'), alt: 'Livre audio pour recueillir les messages des invités' },
-  { src: asset('images/gallery/lycee-duhamel.jpg'), alt: 'Photobooth lors d\'un événement au lycée Duhamel' },
-  { src: asset('images/gallery/paris-hotel.jpg'), alt: 'Événement à Paris à l\'Hôtel du Collectionneur' },
-  { src: asset('images/gallery/soiree-iles.jpg'), alt: 'Soirée à thème îles avec photobooth et tonneau à punch' },
-  { src: asset('images/gallery/couple.jpg'), alt: 'Le duo derrière Attrape Moi Si Tu Booth' },
-  { src: asset('images/gallery/fredo-createur.jpg'), alt: 'Fredo, le créateur d\'Attrape Moi Si Tu Booth' },
+  { src: asset('images/gallery/g01.jpg'), alt: 'Bande de souvenirs imprimés au photobooth' },
+  { src: asset('images/gallery/g02.jpg'), alt: 'Jeunes mariés devant le photobooth' },
+  { src: asset('images/gallery/g03.jpg'), alt: 'Photobooth aux couleurs Burger King' },
+  { src: asset('images/gallery/g04.jpg'), alt: 'Chiffre lumineux « 50 » et décor floral' },
+  { src: asset('images/gallery/g05.jpg'), alt: 'Chiffre lumineux « 30 » coloré' },
+  { src: asset('images/gallery/g06.jpg'), alt: 'Fontaine à punch lumineuse — tonneau vintage' },
+  { src: asset('images/gallery/g07.jpg'), alt: 'Photobooth installé dans un lieu de prestige' },
+  { src: asset('images/gallery/g08.jpg'), alt: 'Fond à paillettes pour le photobooth' },
+  { src: asset('images/gallery/g09.jpg'), alt: 'Décor à paillettes et ballons' },
+  { src: asset('images/gallery/g10.jpg'), alt: 'Invités posant devant le photobooth' },
+  { src: asset('images/gallery/g11.jpg'), alt: 'Terrain de pétanque mobile en extérieur' },
+  { src: asset('images/gallery/g12.jpg'), alt: 'Souvenir imprimé lors d\'un baptême' },
 ];
 
 // Références / lieux & partenaires marquants.
