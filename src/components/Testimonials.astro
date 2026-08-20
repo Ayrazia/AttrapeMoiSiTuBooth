@@ -25,9 +25,23 @@ import { testimonials, references } from '../data/site.js';
     </div>
 
     <div class="refs reveal">
-      <p class="refs-label">Déjà présents dans ces lieux&nbsp;:</p>
+      <p class="refs-label">Ils nous ont fait confiance&nbsp;:</p>
       <ul>
-        {references.map((r) => <li>{r}</li>)}
+        {
+          references.map((r) => {
+            const label = typeof r === 'string' ? r : r.label;
+            const url = typeof r === 'string' ? null : r.url;
+            return (
+              <li>
+                {url ? (
+                  <a href={url} target="_blank" rel="noopener">{label}</a>
+                ) : (
+                  label
+                )}
+              </li>
+            );
+          })
+        }
       </ul>
     </div>
   </div>
@@ -122,5 +136,15 @@ import { testimonials, references } from '../data/site.js';
     position: absolute;
     right: -1.05rem;
     color: var(--or);
+  }
+
+  .refs a {
+    color: var(--or-clair);
+    transition: color 0.25s ease;
+  }
+
+  .refs a:hover {
+    color: var(--creme);
+    text-decoration: underline;
   }
 </style>

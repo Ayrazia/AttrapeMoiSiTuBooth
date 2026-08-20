@@ -24,10 +24,10 @@ export const services = [
     // slug = nom du dossier dans src/prestations/ (dépose tes photos dedans)
     slug: 'photobooth',
     icon: 'camera',
-    title: 'Photobooth / Borne photo',
+    title: 'Photobooth numérique / Borne photo',
     description:
       "Impression instantanée, éclairage professionnel et une caisse d'accessoires fun. Vos invités repartent avec un souvenir imprimé sur-le-champ.",
-    features: ['Tirages illimités', 'Éclairage pro', 'Accessoires fun', 'Prise en main facile'],
+    features: ['Tirages illimités', 'Éclairage pro', 'Accessoires fun', 'À partir de 150 €'],
     featured: true,
   },
   {
@@ -92,12 +92,20 @@ export const gallery = [
   { src: asset('images/gallery/fredo-createur.jpg'), alt: 'Fredo, le créateur d\'Attrape Moi Si Tu Booth' },
 ];
 
-// Références / lieux marquants
+// Références / lieux & partenaires marquants.
+// Chaque entrée = une chaîne, ou { label, url } pour ajouter un lien.
 export const references = [
   'Hôtel du Collectionneur — Paris 5★',
   'Maison Delano — Paris',
   'Château de Cossoles',
+  'Château de Champvallins',
   'Lycée Duhamel',
+  'Mairie de Milly-la-Forêt',
+  'Guy Hoquet',
+  'FLS',
+  'Mademoiselle Centre-Val de Loire',
+  'Burger King',
+  { label: 'Loiret Tourisme', url: 'https://www.tourismeloiret.com' },
 ];
 
 // ⚠️ À REMPLACER par de vrais avis clients (voir note transmise).

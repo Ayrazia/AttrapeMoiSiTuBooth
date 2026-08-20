@@ -18,3 +18,5 @@ pnpm-debug.log*
 # IDE (IntelliJ / WebStorm)
 .idea/
 *.iml
+# GitHub Actions (nécessite le scope workflow pour être poussé)
+.github/

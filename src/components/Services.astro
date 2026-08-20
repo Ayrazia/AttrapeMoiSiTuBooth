@@ -43,7 +43,9 @@ const prestationsData = Object.fromEntries(
     <div class="grid">
       {
         services.map((s) => {
-          const count = (photosBySlug[s.slug] ?? []).length;
+          const photos = photosBySlug[s.slug] ?? [];
+          const count = photos.length;
+          const cover = photos[0];
           return (
             <article
               class={`card reveal is-clickable ${s.featured ? 'card-featured' : ''}`}
@@ -54,6 +56,13 @@ const prestationsData = Object.fromEntries(
               data-desc={s.description}
               aria-label={`Voir les photos : ${s.title}`}
             >
+              {cover && (
+                <span
+                  class="card-bg"
+                  style={`background-image:url('${cover}')`}
+                  aria-hidden="true"
+                />
+              )}
               {s.featured && <span class="badge">Le plus demandé</span>}
               <div class="card-icon"><Icon name={s.icon} size={30} /></div>
               <h3 class="card-title">{s.title}</h3>
@@ -140,8 +149,36 @@ const prestationsData = Object.fromEntries(
     position: relative;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    isolation: isolate;
     transition: transform var(--transition), box-shadow var(--transition),
       border-color var(--transition);
+  }
+
+  /* Fond flouté = photo de l'animation, en léger filigrane derrière le texte */
+  .card-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-size: cover;
+    background-position: center;
+    filter: blur(7px);
+    transform: scale(1.18);
+    opacity: 0.16;
+    transition: opacity var(--transition);
+    pointer-events: none;
+  }
+
+  .card:hover .card-bg {
+    opacity: 0.26;
+  }
+
+  .card-featured .card-bg {
+    opacity: 0.3;
+  }
+
+  .card-featured:hover .card-bg {
+    opacity: 0.42;
   }
 
   .card.is-clickable {
