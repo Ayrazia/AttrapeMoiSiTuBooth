@@ -189,45 +189,66 @@ import { brand, contact } from '../data/site.js';
   /* ============================================================
      Mobile / tablette : photo en fond plein écran, texte par-dessus
      ============================================================ */
+  /* ============================================================
+     Mobile / tablette : disposition empilée — photo nette en haut,
+     texte sur fond sombre propre en dessous (pas de voile "muddy").
+     ============================================================ */
   @media (max-width: 900px) {
+    .hero {
+      min-height: auto;
+    }
+
     .hero-grid {
       grid-template-columns: 1fr;
+      min-height: auto;
+    }
+
+    .hero-photo {
+      position: relative;
+      order: -1;
+      width: 100%;
+      height: 44vh;
+      min-height: 300px;
+    }
+
+    .hero-photo img {
+      object-position: center 40%;
+    }
+
+    /* Fond dégradé pour fondre le bas de la photo dans le bloc texte sombre */
+    .hero-photo-fade {
+      display: block;
+      background: linear-gradient(
+        180deg,
+        rgba(14, 13, 12, 0) 55%,
+        rgba(14, 13, 12, 0.9) 100%
+      );
     }
 
     .hero-content {
       position: relative;
       z-index: 2;
-      justify-content: flex-end;
+      justify-content: flex-start;
       max-width: 100%;
       margin-left: 0;
-      padding: 120px clamp(1.4rem, 6vw, 2.5rem) 60px;
+      padding: 2.4rem clamp(1.4rem, 6vw, 2.2rem) 3rem;
     }
 
-    .hero-photo {
-      position: absolute;
-      inset: 0;
-      z-index: 0;
+    .hero-title {
+      font-size: clamp(2.1rem, 8vw, 3rem);
+      margin-bottom: 1.1rem;
     }
 
-    .hero-photo img {
-      object-position: center 32%;
-    }
-
-    .hero-photo-fade {
-      display: none;
+    .hero-sub {
+      margin-bottom: 1.8rem;
     }
 
     .hero-overlay {
-      display: block;
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-      background: linear-gradient(
-        180deg,
-        rgba(14, 13, 12, 0.55) 0%,
-        rgba(14, 13, 12, 0.55) 35%,
-        rgba(14, 13, 12, 0.9) 100%
-      );
+      display: none;
+    }
+
+    .scroll-cue {
+      display: none;
     }
   }
 
