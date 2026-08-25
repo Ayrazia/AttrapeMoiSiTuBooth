@@ -103,8 +103,8 @@ export const references = [
   { label: 'Guy Hoquet', logo: asset('images/logos/guy-hoquet.svg') },
   { label: 'FLS', logo: asset('images/logos/fls.jpg') },
   { label: 'Loiret Tourisme', logo: asset('images/logos/loiret-tourisme.svg'), url: 'https://www.tourismeloiret.com' },
+  { label: 'Maison Delano — Paris', logo: asset('images/logos/delano.jpg') },
   // Sans logo → repris en texte sous les logos
-  { label: 'Maison Delano — Paris' },
   { label: 'Château de Cossoles' },
   { label: 'Lycée Duhamel' },
   { label: 'Mairie de Milly-la-Forêt' },

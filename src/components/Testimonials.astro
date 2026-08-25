@@ -127,20 +127,27 @@ const textOnly = references.filter((r) => !r.logo).map((r) => r.label);
     margin-bottom: 1.2rem;
   }
 
+  /* Tous les logos sur une seule ligne (défilement horizontal si trop étroit) */
   .logo-wall {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-wrap: nowrap;
     align-items: center;
-    gap: 1rem;
+    gap: 0.7rem;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto;
+    overflow-x: auto;
+    padding: 4px 2px 8px;
+    scrollbar-width: thin;
   }
 
   .logo-chip {
-    height: 78px;
-    min-width: 120px;
-    padding: 0 1.5rem;
+    flex: 0 0 auto;
+    height: 68px;
+    min-width: 84px;
+    padding: 0 0.9rem;
     background: #ffffff;
-    border-radius: 14px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -153,8 +160,8 @@ const textOnly = references.filter((r) => !r.logo).map((r) => r.label);
   }
 
   .logo-img {
-    max-height: 48px;
-    max-width: 160px;
+    max-height: 42px;
+    max-width: 108px;
     width: auto;
     object-fit: contain;
     display: block;
