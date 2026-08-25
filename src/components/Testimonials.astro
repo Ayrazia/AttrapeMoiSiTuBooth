@@ -1,5 +1,8 @@
 ---
 import { testimonials, references } from '../data/site.js';
+
+const withLogo = references.filter((r) => r.logo);
+const textOnly = references.filter((r) => !r.logo).map((r) => r.label);
 ---
 
 <section class="section testimonials" id="avis">
@@ -25,24 +28,32 @@ import { testimonials, references } from '../data/site.js';
     </div>
 
     <div class="refs reveal">
-      <p class="refs-label">Ils nous ont fait confiance&nbsp;:</p>
-      <ul>
+      <p class="refs-label">Partenaires &amp; lieux d'exception&nbsp;:</p>
+
+      <div class="logo-wall">
         {
-          references.map((r) => {
-            const label = typeof r === 'string' ? r : r.label;
-            const url = typeof r === 'string' ? null : r.url;
-            return (
-              <li>
-                {url ? (
-                  <a href={url} target="_blank" rel="noopener">{label}</a>
-                ) : (
-                  label
-                )}
-              </li>
+          withLogo.map((r) => {
+            const img = (
+              <img class="logo-img" src={r.logo} alt={r.label} loading="lazy" />
+            );
+            return r.url ? (
+              <a class="logo-chip" href={r.url} target="_blank" rel="noopener" aria-label={r.label}>
+                {img}
+              </a>
+            ) : (
+              <div class="logo-chip" title={r.label}>{img}</div>
             );
           })
         }
-      </ul>
+      </div>
+
+      {
+        textOnly.length > 0 && (
+          <p class="refs-more">
+            …et aussi&nbsp;: {textOnly.join(' · ')}
+          </p>
+        )
+      }
     </div>
   </div>
 </section>
@@ -116,35 +127,42 @@ import { testimonials, references } from '../data/site.js';
     margin-bottom: 1.2rem;
   }
 
-  .refs ul {
-    list-style: none;
+  .logo-wall {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 0.8rem 2rem;
+    align-items: center;
+    gap: 1rem;
   }
 
-  .refs li {
-    font-family: var(--font-titre);
-    font-size: 1.05rem;
-    color: rgba(246, 241, 233, 0.85);
-    position: relative;
+  .logo-chip {
+    height: 78px;
+    min-width: 120px;
+    padding: 0 1.5rem;
+    background: #ffffff;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
 
-  .refs li:not(:last-child)::after {
-    content: '·';
-    position: absolute;
-    right: -1.05rem;
-    color: var(--or);
+  a.logo-chip:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px -14px rgba(0, 0, 0, 0.6);
   }
 
-  .refs a {
-    color: var(--or-clair);
-    transition: color 0.25s ease;
+  .logo-img {
+    max-height: 48px;
+    max-width: 160px;
+    width: auto;
+    object-fit: contain;
+    display: block;
   }
 
-  .refs a:hover {
-    color: var(--creme);
-    text-decoration: underline;
+  .refs-more {
+    margin-top: 1.6rem;
+    font-size: 0.95rem;
+    color: rgba(246, 241, 233, 0.6);
   }
 </style>

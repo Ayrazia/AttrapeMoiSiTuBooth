@@ -93,20 +93,21 @@ export const gallery = [
   { src: asset('images/gallery/g12.jpg'), alt: 'Souvenir imprimé lors d\'un baptême' },
 ];
 
-// Références / lieux & partenaires marquants.
-// Chaque entrée = une chaîne, ou { label, url } pour ajouter un lien.
+// Références / partenaires.
+// Avec logo → { label, logo, url? } ; sans logo → { label } (affiché en texte).
 export const references = [
-  'Hôtel du Collectionneur — Paris 5★',
-  'Maison Delano — Paris',
-  'Château de Cossoles',
-  'Château de Champvallins',
-  'Lycée Duhamel',
-  'Mairie de Milly-la-Forêt',
-  'Guy Hoquet',
-  'FLS',
-  'Mademoiselle Centre-Val de Loire',
-  'Burger King',
-  { label: 'Loiret Tourisme', url: 'https://www.tourismeloiret.com' },
+  { label: 'Hôtel du Collectionneur', logo: asset('images/logos/hotel-collectionneur.webp') },
+  { label: 'Château de Champvallins', logo: asset('images/logos/champvallins.png') },
+  { label: 'Mademoiselle Centre-Val de Loire', logo: asset('images/logos/mademoiselle.jpg') },
+  { label: 'Burger King', logo: asset('images/logos/burger-king.svg') },
+  { label: 'Guy Hoquet', logo: asset('images/logos/guy-hoquet.svg') },
+  { label: 'FLS', logo: asset('images/logos/fls.jpg') },
+  { label: 'Loiret Tourisme', logo: asset('images/logos/loiret-tourisme.svg'), url: 'https://www.tourismeloiret.com' },
+  // Sans logo → repris en texte sous les logos
+  { label: 'Maison Delano — Paris' },
+  { label: 'Château de Cossoles' },
+  { label: 'Lycée Duhamel' },
+  { label: 'Mairie de Milly-la-Forêt' },
 ];
 
 // ⚠️ À REMPLACER par de vrais avis clients (voir note transmise).
