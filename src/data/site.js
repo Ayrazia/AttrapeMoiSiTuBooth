@@ -51,7 +51,7 @@ export const services = [
     icon: 'lightbulb',
     title: 'Chiffres lumineux',
     description:
-      "Des chiffres lumineux XXL pour habiller votre décor et marquer l'occasion : anniversaires, dates de mariage, jubilés…",
+      "Des chiffres lumineux XXL pour habiller votre décor et marquer l'occasion : anniversaires, dates de mariage, grandes occasions…",
     features: ['Décor lumineux', 'Format XXL', 'Personnalisable'],
   },
   {
@@ -90,7 +90,6 @@ export const gallery = [
   { src: asset('images/gallery/g09.jpg'), alt: 'Décor à paillettes et ballons' },
   { src: asset('images/gallery/g10.jpg'), alt: 'Invités posant devant le photobooth' },
   { src: asset('images/gallery/g11.jpg'), alt: 'Terrain de pétanque mobile en extérieur' },
-  { src: asset('images/gallery/g12.jpg'), alt: 'Souvenir imprimé lors d\'un baptême' },
 ];
 
 // Références / partenaires.
