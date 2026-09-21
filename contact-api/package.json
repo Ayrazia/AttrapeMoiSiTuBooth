@@ -1,0 +1,10 @@
+{
+  "name": "attrape-contact-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Relais serverless (Vercel) pour le formulaire de contact — envoi via SMTP Brevo",
+  "dependencies": {
+    "nodemailer": "^6.9.16"
+  }
+}

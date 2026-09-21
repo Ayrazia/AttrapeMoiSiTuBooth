@@ -39,10 +39,12 @@ s'ajoute automatiquement à la modal. Voir [src/prestations/README.md](src/prest
 
 1. **Avis clients** — les 3 témoignages de `testimonials` sont des exemples.
    Remplace-les par de vrais avis (nom, événement, citation).
-2. **Formulaire de contact** — pour recevoir les messages par email, crée un
-   compte gratuit sur [Formspree](https://formspree.io) et remplace `VOTRE_ID`
-   dans `src/components/Contact.astro`. Les boutons Téléphone et Email
-   fonctionnent déjà sans configuration.
+2. **Formulaire de contact (via Brevo)** — les envois passent par un petit
+   relais serverless sur Vercel qui utilise ton SMTP Brevo. Suis le guide
+   [contact-api/README.md](contact-api/README.md), puis colle l'URL de la
+   fonction dans `formEndpoint` (`src/data/site.js`). Tant que ce n'est pas
+   configuré, le formulaire ouvre un email pré-rempli (repli mailto), et les
+   boutons Téléphone / Email fonctionnent déjà.
 3. **Email** — vérifie l'adresse `attrape.moisi.tubooth@outlook.com` dans
    `src/data/site.js` (lecture approximative de la carte de visite).
 

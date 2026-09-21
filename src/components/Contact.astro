@@ -1,6 +1,10 @@
 ---
 import { contact } from '../data/site.js';
 import Icon from './Icon.astro';
+
+// Endpoint du relais mail : variable d'env (PUBLIC_CONTACT_ENDPOINT) sinon
+// la valeur dans site.js. Vide → repli sur un lien mailto.
+const endpoint = import.meta.env.PUBLIC_CONTACT_ENDPOINT || contact.formEndpoint || '';
 ---
 
 <section class="section contact" id="contact">
@@ -49,17 +53,7 @@ import Icon from './Icon.astro';
       </div>
 
       <div class="contact-form-wrap reveal">
-        <!--
-          Ce formulaire est prêt à l'emploi avec Formspree (gratuit) :
-          1. Crée un compte sur https://formspree.io
-          2. Remplace VOTRE_ID ci-dessous par ton identifiant de formulaire.
-          Sans cette étape, les boutons Téléphone / Email fonctionnent déjà.
-        -->
-        <form
-          class="contact-form"
-          action="https://formspree.io/f/VOTRE_ID"
-          method="POST"
-        >
+        <form class="contact-form" id="contact-form" novalidate>
           <div class="field">
             <label for="name">Nom</label>
             <input type="text" id="name" name="name" required placeholder="Votre nom" />
@@ -95,7 +89,21 @@ import Icon from './Icon.astro';
             <label for="message">Votre message</label>
             <textarea id="message" name="message" rows="4" placeholder="Parlez-nous de votre projet…"></textarea>
           </div>
-          <button type="submit" class="btn btn-primary form-btn">Envoyer ma demande</button>
+
+          {/* Champ piège anti-spam — ne pas remplir (masqué aux visiteurs) */}
+          <input
+            type="text"
+            name="company"
+            class="hp-field"
+            tabindex="-1"
+            autocomplete="off"
+            aria-hidden="true"
+          />
+
+          <button type="submit" class="btn btn-primary form-btn" id="contact-submit">
+            Envoyer ma demande
+          </button>
+          <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
         </form>
       </div>
     </div>
@@ -218,6 +226,39 @@ import Icon from './Icon.astro';
     margin-top: 0.4rem;
   }
 
+  .form-btn[disabled] {
+    opacity: 0.65;
+    cursor: default;
+  }
+
+  /* Champ piège anti-spam : invisible pour les humains */
+  .hp-field {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .form-status {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin: 0.2rem 0 0;
+    min-height: 1em;
+  }
+
+  .form-status.ok {
+    color: #1c7a3f;
+    font-weight: 600;
+  }
+
+  .form-status.err {
+    color: #b23b2e;
+    font-weight: 600;
+  }
+
   @media (max-width: 820px) {
     .contact-grid {
       grid-template-columns: 1fr;
@@ -227,3 +268,72 @@ import Icon from './Icon.astro';
     }
   }
 </style>
+
+<script define:vars={{ endpoint, mailtoAddr: contact.email }}>
+  const form = document.getElementById('contact-form');
+  const statusEl = document.getElementById('form-status');
+  const btn = document.getElementById('contact-submit');
+
+  function setStatus(msg, type) {
+    if (!statusEl) return;
+    statusEl.textContent = msg;
+    statusEl.className = 'form-status' + (type ? ' ' + type : '');
+  }
+
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form).entries());
+
+      if (!data.name || !data.email || !data.message) {
+        setStatus("Merci d'indiquer au minimum votre nom, votre email et un message.", 'err');
+        return;
+      }
+
+      // Repli mailto si aucun relais n'est configuré
+      if (!endpoint) {
+        const body = encodeURIComponent(
+          `Nom : ${data.name}\nEmail : ${data.email}\n` +
+            `Téléphone : ${data.phone || '-'}\nType : ${data.event || '-'}\n` +
+            `Date : ${data.date || '-'}\n\n${data.message}`
+        );
+        const subject = encodeURIComponent(`Demande — ${data.event || 'Contact'} — ${data.name}`);
+        window.location.href = `mailto:${mailtoAddr}?subject=${subject}&body=${body}`;
+        return;
+      }
+
+      const original = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Envoi…';
+      setStatus('', '');
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        const json = await res.json().catch(() => ({}));
+
+        if (res.ok && json.ok) {
+          form.reset();
+          setStatus('Merci ! Votre demande a bien été envoyée, nous vous répondrons rapidement. 🎉', 'ok');
+        } else {
+          setStatus(
+            (json && json.error) ||
+              'Une erreur est survenue. Réessayez, ou écrivez-nous directement par email.',
+            'err'
+          );
+        }
+      } catch (err) {
+        setStatus(
+          "Impossible d'envoyer pour le moment. Écrivez-nous directement par email ou téléphone.",
+          'err'
+        );
+      } finally {
+        btn.disabled = false;
+        btn.textContent = original;
+      }
+    });
+  }
+</script>

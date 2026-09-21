@@ -1,0 +1,92 @@
+import nodemailer from 'nodemailer';
+
+// Origine autorisée (le site GitHub Pages). Modifiable via variable d'env.
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://ayrazia.github.io';
+
+function setCors(res) {
+  res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+}
+
+function escapeHtml(s = '') {
+  return String(s).replace(
+    /[&<>"']/g,
+    (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])
+  );
+}
+
+export default async function handler(req, res) {
+  setCors(res);
+
+  if (req.method === 'OPTIONS') return res.status(204).end();
+  if (req.method !== 'POST') {
+    return res.status(405).json({ ok: false, error: 'Méthode non autorisée.' });
+  }
+
+  try {
+    const body =
+      typeof req.body === 'string' ? JSON.parse(req.body || '{}') : req.body || {};
+    const { name, email, phone, event, date, message, company } = body;
+
+    // Anti-spam : le champ "company" est un piège (honeypot). Si rempli → bot.
+    if (company) return res.status(200).json({ ok: true });
+
+    if (!name || !email || !message) {
+      return res.status(400).json({ ok: false, error: 'Champs requis manquants.' });
+    }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      return res.status(400).json({ ok: false, error: 'Adresse email invalide.' });
+    }
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.BREVO_SMTP_HOST || 'smtp-relay.brevo.com',
+      port: Number(process.env.BREVO_SMTP_PORT || 587),
+      secure: false, // STARTTLS sur le port 587
+      auth: {
+        user: process.env.BREVO_SMTP_USER,
+        pass: process.env.BREVO_SMTP_PASS,
+      },
+    });
+
+    const to = process.env.CONTACT_TO;
+    // Doit être un expéditeur VÉRIFIÉ dans Brevo
+    const from = process.env.CONTACT_FROM || process.env.CONTACT_TO;
+
+    const subject = `Nouvelle demande — ${event || 'Contact'} — ${name}`;
+
+    const textLines = [
+      `Nom : ${name}`,
+      `Email : ${email}`,
+      phone ? `Téléphone : ${phone}` : null,
+      event ? `Type d'événement : ${event}` : null,
+      date ? `Date souhaitée : ${date}` : null,
+      '',
+      'Message :',
+      message,
+    ].filter((l) => l !== null);
+
+    await transporter.sendMail({
+      from: `Attrape Moi Si Tu Booth <${from}>`,
+      to,
+      replyTo: `${name} <${email}>`,
+      subject,
+      text: textLines.join('\n'),
+      html: `<div style="font-family:Arial,sans-serif;font-size:15px;color:#201e1b;line-height:1.6">
+        <h2 style="color:#0e0d0c;margin:0 0 12px">Nouvelle demande de contact</h2>
+        <p style="margin:4px 0"><strong>Nom :</strong> ${escapeHtml(name)}</p>
+        <p style="margin:4px 0"><strong>Email :</strong> ${escapeHtml(email)}</p>
+        ${phone ? `<p style="margin:4px 0"><strong>Téléphone :</strong> ${escapeHtml(phone)}</p>` : ''}
+        ${event ? `<p style="margin:4px 0"><strong>Type d'événement :</strong> ${escapeHtml(event)}</p>` : ''}
+        ${date ? `<p style="margin:4px 0"><strong>Date souhaitée :</strong> ${escapeHtml(date)}</p>` : ''}
+        <p style="margin:12px 0 4px"><strong>Message :</strong></p>
+        <p style="margin:0;white-space:pre-wrap">${escapeHtml(message)}</p>
+      </div>`,
+    });
+
+    return res.status(200).json({ ok: true });
+  } catch (err) {
+    console.error('Contact form error:', err);
+    return res.status(500).json({ ok: false, error: 'Envoi impossible pour le moment.' });
+  }
+}

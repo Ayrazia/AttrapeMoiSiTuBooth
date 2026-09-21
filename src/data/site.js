@@ -16,6 +16,9 @@ export const contact = {
   zone: 'Centre-Val de Loire · Île-de-France',
   instagram: 'attrape.moisi.tubooth',
   instagramUrl: 'https://www.instagram.com/attrape.moisi.tubooth/',
+  // URL du relais mail (fonction Vercel) — voir contact-api/README.md.
+  // Ex. 'https://ton-projet.vercel.app/api/contact'. Vide = repli mailto.
+  formEndpoint: '',
 };
 
 // Prestations proposées
