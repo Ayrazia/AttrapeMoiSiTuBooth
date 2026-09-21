@@ -3,7 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Relais serverless (Vercel) pour le formulaire de contact — envoi via SMTP Brevo",
+  "description": "Relais mail du formulaire de contact — envoi via SMTP Brevo (Vercel/Netlify/Render/VPS/local)",
+  "scripts": {
+    "start": "node --env-file=.env server.js",
+    "dev": "node --env-file=.env server.js"
+  },
+  "engines": {
+    "node": ">=20.6.0"
+  },
   "dependencies": {
     "nodemailer": "^6.9.16"
   }
