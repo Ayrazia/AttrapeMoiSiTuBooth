@@ -12,12 +12,15 @@ import { contact, legal } from '../data/site.js';
     Le présent site est édité par&nbsp;:
   </p>
   <ul>
-    <li><strong>{legal.exploitant}</strong></li>
+    <li>
+      <strong>{legal.responsable}</strong>, {legal.statut}, exerçant sous le nom
+      commercial « {legal.exploitant} »
+    </li>
     <li>Responsable de la publication : {legal.responsable}</li>
-    <li>Statut : {legal.statut}</li>
     <li>SIRET : {legal.siret}</li>
     {legal.rcs && <li>{legal.rcs}</li>}
     {legal.tva && <li>N° TVA intracommunautaire : {legal.tva}</li>}
+    {!legal.tva && legal.franchiseTva && <li>TVA non applicable, art. 293 B du CGI</li>}
     <li>Adresse : {legal.adresse}, {legal.codePostalVille}</li>
     <li>Téléphone : <a href={contact.phoneHref}>{contact.phone}</a></li>
     <li>Email : <a href={`mailto:${contact.email}`}>{contact.email}</a></li>
@@ -30,22 +33,30 @@ import { contact, legal } from '../data/site.js';
     <a href={legal.hebergeurSite} target="_blank" rel="noopener">{legal.hebergeurSite}</a>.
   </p>
   <p>
-    Le formulaire de contact est traité par un service hébergé chez
+    Le formulaire de contact est traité par un service hébergé en France chez
     <strong>{legal.relaisHebergeur}</strong>, et les emails sont acheminés par
-    Brevo (Sendinblue SAS). Voir la
+    Brevo (Sendinblue SAS, France). Voir la
     <a href={`${import.meta.env.BASE_URL}confidentialite/`}>politique de confidentialité</a>.
   </p>
 
-  <h2>Médiation de la consommation</h2>
-  <p>
-    Conformément aux articles L.611-1 et suivants du Code de la consommation, en
-    cas de litige non résolu à l'amiable, le client consommateur peut recourir
-    gratuitement au médiateur de la consommation suivant :
-    <strong>{legal.mediateur}</strong>
-    {legal.mediateurSite && (
-      <span> — <a href={legal.mediateurSite} target="_blank" rel="noopener">{legal.mediateurSite}</a></span>
-    )}.
-  </p>
+  {
+    legal.mediateur && (
+      <>
+        <h2>Médiation de la consommation</h2>
+        <p>
+          Conformément aux articles L.611-1 et suivants du Code de la consommation,
+          en cas de litige non résolu à l'amiable, le client consommateur peut
+          recourir gratuitement au médiateur de la consommation suivant :
+          <strong>{legal.mediateur}</strong>
+          {legal.mediateurSite && (
+            <span>
+              {' '}— <a href={legal.mediateurSite} target="_blank" rel="noopener">{legal.mediateurSite}</a>
+            </span>
+          )}.
+        </p>
+      </>
+    )
+  }
 
   <h2>Propriété intellectuelle</h2>
   <p>

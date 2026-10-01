@@ -28,26 +28,28 @@ export const contact = {
 // ============================================================
 export const legal = {
   // Exploitant / éditeur du site
-  exploitant: 'Attrape Moi Si Tu Booth',
-  responsable: '[Prénom NOM du responsable de publication]',
-  statut: '[Statut juridique — ex. micro-entreprise / auto-entrepreneur]',
-  siret: '[Numéro SIRET]',
+  exploitant: 'Attrape Moi Si Tu Booth', // nom commercial
+  responsable: 'Frédéric SANTOS',
+  statut: 'Entrepreneur individuel (EI) — micro-entreprise',
+  siret: '988 459 640 00013',
   rcs: '', // ex. "RCS Orléans 123 456 789" — laisser vide si non applicable
   tva: '', // n° TVA intracommunautaire — laisser vide si non assujetti (franchise en base)
-  adresse: '[Adresse]',
-  codePostalVille: '[Code postal et ville]',
+  franchiseTva: true, // affiche « TVA non applicable, art. 293 B du CGI »
+  adresse: '9 bis Grande Rue',
+  codePostalVille: '45300 Courcelles-le-Roi',
 
   // Hébergeur du site (GitHub Pages) — factuel, ne pas modifier sauf changement d'hébergeur
   hebergeur: 'GitHub, Inc.',
   hebergeurAdresse: '88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis',
   hebergeurSite: 'https://pages.github.com',
-  hebergeurTel: "[Téléphone de l'hébergeur — à vérifier sur github.com/contact]",
+  hebergeurTel: '+1 (877) 448-4820',
 
-  // Hébergeur du relais du formulaire de contact (une fois choisi)
-  relaisHebergeur: '[Hébergeur du formulaire — ex. Render, Netlify ou Vercel]',
+  // Hébergeur du relais du formulaire de contact
+  relaisHebergeur: 'OVHcloud (OVH SAS, Roubaix, France)',
 
-  // Médiateur de la consommation (obligatoire si tu vends à des particuliers)
-  mediateur: '[Nom du médiateur de la consommation]',
+  // Médiateur de la consommation — OBLIGATOIRE avec des clients particuliers.
+  // En attente : la section est masquée tant que `mediateur` est vide.
+  mediateur: '',
   mediateurSite: '', // ex. 'https://www.cm2c.net'
 
   // Date de dernière mise à jour des pages légales
