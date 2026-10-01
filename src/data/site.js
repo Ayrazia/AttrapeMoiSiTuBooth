@@ -63,7 +63,7 @@ export const services = [
     title: 'Photobooth numérique / Borne photo',
     description:
       "Impression instantanée, éclairage professionnel et une caisse d'accessoires fun. Vos invités repartent avec un souvenir imprimé sur-le-champ.",
-    features: ['Tirages illimités', 'Éclairage pro', 'Accessoires fun', 'À partir de 150 €'],
+    features: ['Tirages illimités', 'Éclairage pro', 'Accessoires fun', 'À partir de 150 € TTC'],
     featured: true,
   },
   {
@@ -96,7 +96,7 @@ export const services = [
     title: 'Terrain de pétanque mobile',
     description:
       "Un terrain de pétanque mobile de 2 × 7 m, installé en un clin d'œil. L'animation originale pour vos événements en intérieur comme en extérieur.",
-    features: ['2 × 7 mètres', 'Installation rapide', '250 € la journée'],
+    features: ['2 × 7 mètres', 'Installation rapide', '250 € TTC la journée'],
   },
 ];
 

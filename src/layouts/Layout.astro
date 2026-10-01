@@ -1,4 +1,12 @@
 ---
+// Polices hébergées sur le site (pas d'appel à Google → pas de fuite d'IP)
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
+import '@fontsource/inter/700.css';
+import '@fontsource/playfair-display/600.css';
+import '@fontsource/playfair-display/700.css';
+import '@fontsource/playfair-display/800.css';
 import '../styles/global.css';
 import { brand } from '../data/site.js';
 
@@ -30,14 +38,6 @@ const ogImage = Astro.site
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
     <meta property="og:locale" content="fr_FR" />
-
-    <!-- Polices -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap"
-      rel="stylesheet"
-    />
   </head>
   <body>
     <slot />
