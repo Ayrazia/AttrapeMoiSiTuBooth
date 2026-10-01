@@ -8,19 +8,57 @@ import '@fontsource/playfair-display/600.css';
 import '@fontsource/playfair-display/700.css';
 import '@fontsource/playfair-display/800.css';
 import '../styles/global.css';
-import { brand } from '../data/site.js';
+import { brand, contact, legal, services } from '../data/site.js';
 
 const {
-  title = `${brand.name} — ${brand.tagline}`,
-  description = brand.baseline,
+  title = `Location photobooth & animations | ${brand.name}`,
+  description = "Location de photobooth, livre audio et animations pour mariages, anniversaires et événements d'entreprise dans le Loiret, en Centre-Val de Loire et en Île-de-France.",
 } = Astro.props;
 
 const base = import.meta.env.BASE_URL;
+const abs = (path) => new URL(`${base}${path}`, Astro.site).href;
 const logoUrl = `${base}images/logo.jpg`;
-// URL absolue pour le partage social (Open Graph)
-const ogImage = Astro.site
-  ? new URL(`${base}images/hero.jpg`, Astro.site).href
-  : `${base}images/hero.jpg`;
+const ogImage = abs('images/hero.jpg');
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const isHome = Astro.url.pathname === base;
+
+// Données structurées « entreprise locale » (schema.org) — page d'accueil
+const [postalCode, ...ville] = legal.codePostalVille.split(' ');
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  '@id': `${abs('')}#entreprise`,
+  name: brand.name,
+  description,
+  url: abs(''),
+  logo: abs('images/logo.jpg'),
+  image: ogImage,
+  telephone: contact.phoneHref.replace('tel:', ''),
+  email: contact.email,
+  address: {
+    '@type': 'PostalAddress',
+    postalCode,
+    addressLocality: ville.join(' '),
+    addressRegion: 'Centre-Val de Loire',
+    addressCountry: 'FR',
+  },
+  areaServed: [
+    { '@type': 'AdministrativeArea', name: 'Loiret' },
+    { '@type': 'AdministrativeArea', name: 'Centre-Val de Loire' },
+    { '@type': 'AdministrativeArea', name: 'Île-de-France' },
+  ],
+  sameAs: [contact.instagramUrl],
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Prestations',
+    itemListElement: services.map((s) => ({
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Service', name: s.title, description: s.description },
+    })),
+  },
+};
+// Échappe "<" pour qu'aucun contenu ne puisse fermer la balise <script>
+const jsonLdString = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
 ---
 
 <!doctype html>
@@ -31,13 +69,20 @@ const ogImage = Astro.site
     <link rel="icon" type="image/jpeg" href={logoUrl} />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="sitemap" href={`${base}sitemap-index.xml`} />
 
-    <!-- Open Graph -->
+    <!-- Open Graph / partage réseaux sociaux -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={brand.name} />
+    <meta property="og:url" content={canonical} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
     <meta property="og:locale" content="fr_FR" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    {isHome && <script type="application/ld+json" set:html={jsonLdString} />}
   </head>
   <body>
     <slot />
