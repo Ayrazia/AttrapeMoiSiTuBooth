@@ -16,9 +16,9 @@ export const contact = {
   zone: 'Centre-Val de Loire · Île-de-France',
   instagram: 'attrape.moisi.tubooth',
   instagramUrl: 'https://www.instagram.com/attrape.moisi.tubooth/',
-  // URL du relais mail (fonction Vercel) — voir contact-api/README.md.
-  // Ex. 'https://ton-projet.vercel.app/api/contact'. Vide = repli mailto.
-  formEndpoint: '',
+  // Relais mail : servi par le même VPS que le site (Caddy → contact-api).
+  // Vide = repli mailto.
+  formEndpoint: '/api/contact',
 };
 
 // ============================================================
@@ -38,14 +38,11 @@ export const legal = {
   adresse: '9 bis Grande Rue',
   codePostalVille: '45300 Courcelles-le-Roi',
 
-  // Hébergeur du site (GitHub Pages) — factuel, ne pas modifier sauf changement d'hébergeur
-  hebergeur: 'GitHub, Inc.',
-  hebergeurAdresse: '88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis',
-  hebergeurSite: 'https://pages.github.com',
-  hebergeurTel: '+1 (877) 448-4820',
-
-  // Hébergeur du relais du formulaire de contact
-  relaisHebergeur: 'OVHcloud (OVH SAS, Roubaix, France)',
+  // Hébergeur du site ET du formulaire (VPS OVH) — factuel
+  hebergeur: 'OVH SAS',
+  hebergeurAdresse: '2 rue Kellermann, 59100 Roubaix, France',
+  hebergeurSite: 'https://www.ovhcloud.com',
+  hebergeurTel: '1007',
 
   // Médiateur de la consommation — OBLIGATOIRE avec des clients particuliers.
   // En attente : la section est masquée tant que `mediateur` est vide.
@@ -112,7 +109,7 @@ export const events = [
   { icon: 'graduation', label: 'Soirées étudiantes' },
 ];
 
-// Préfixe le chemin avec la base du site (gère le sous-dossier GitHub Pages)
+// Préfixe le chemin avec la base du site (cf. `base` dans astro.config.mjs)
 const asset = (p) => `${import.meta.env.BASE_URL}${p}`;
 
 // Galerie — sélection de photos réelles d'événements

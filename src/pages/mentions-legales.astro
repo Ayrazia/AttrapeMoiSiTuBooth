@@ -28,14 +28,14 @@ import { contact, legal } from '../data/site.js';
 
   <h2>Hébergement</h2>
   <p>
-    Le site est hébergé par <strong>{legal.hebergeur}</strong> —
-    {legal.hebergeurAdresse} — Tél. : {legal.hebergeurTel} —
+    Le site et son formulaire de contact sont hébergés en France par
+    <strong>{legal.hebergeur}</strong> — {legal.hebergeurAdresse} —
+    Tél. : {legal.hebergeurTel} —
     <a href={legal.hebergeurSite} target="_blank" rel="noopener">{legal.hebergeurSite}</a>.
   </p>
   <p>
-    Le formulaire de contact est traité par un service hébergé en France chez
-    <strong>{legal.relaisHebergeur}</strong>, et les emails sont acheminés par
-    Brevo (Sendinblue SAS, France). Voir la
+    Les emails du formulaire sont acheminés par Brevo (Sendinblue SAS, France).
+    Voir la
     <a href={`${import.meta.env.BASE_URL}confidentialite/`}>politique de confidentialité</a>.
   </p>
 

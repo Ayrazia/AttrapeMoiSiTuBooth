@@ -39,45 +39,27 @@ s'ajoute automatiquement à la modal. Voir [src/prestations/README.md](src/prest
 
 1. **Avis clients** — les 3 témoignages de `testimonials` sont des exemples.
    Remplace-les par de vrais avis (nom, événement, citation).
-2. **Formulaire de contact (via Brevo)** — les envois passent par un petit
-   relais serverless sur Vercel qui utilise ton SMTP Brevo. Suis le guide
-   [contact-api/README.md](contact-api/README.md), puis colle l'URL de la
-   fonction dans `formEndpoint` (`src/data/site.js`). Tant que ce n'est pas
-   configuré, le formulaire ouvre un email pré-rempli (repli mailto), et les
-   boutons Téléphone / Email fonctionnent déjà.
+2. **Formulaire de contact (via Brevo)** — les envois passent par le relais
+   `contact-api/` qui tourne sur le VPS (route `/api/contact`) et utilise ton
+   SMTP Brevo. Les secrets sont dans `/etc/attrape-contact.env` sur le VPS —
+   voir [deploy/README.md](deploy/README.md).
 3. **Email** — vérifie l'adresse `attrape.moisi.tubooth@outlook.com` dans
    `src/data/site.js` (lecture approximative de la carte de visite).
 
-## Déployer (GitHub Pages)
+## Déployer (VPS OVH)
 
-Le site est en ligne ici : **https://ayrazia.github.io/AttrapeMoiSiTuBooth/**
+Le site et le relais du formulaire sont hébergés sur un VPS OVH (Debian 13)
+derrière Caddy : **https://attrapemoisitubooth.fr**
 
-Pour **publier une mise à jour** (par ex. après avoir ajouté des photos de
-prestations ou modifié un texte), une seule commande :
+Pour **publier une mise à jour** (photos de prestations, textes…) :
 
 ```bash
 npm run deploy
 ```
 
-Elle build le site et l'envoie sur la branche `gh-pages`. Le site est à jour
-en ~1 minute.
-
-> ℹ️ Le sous-dossier d'URL (`/AttrapeMoiSiTuBooth/`) est configuré dans
-> `astro.config.mjs` via `base`. Si tu ajoutes un jour un nom de domaine perso,
-> remets `base: '/'`.
-
-### (Optionnel) Déploiement automatique à chaque push
-
-Un workflow GitHub Actions est prêt dans `.github/workflows/deploy.yml`. Pour
-l'activer (déploiement auto sans lancer `npm run deploy`), autorise une fois le
-scope `workflow` puis pousse-le :
-
-```bash
-gh auth refresh -h github.com -s workflow
-git add .github && git commit -m "Ajout du déploiement automatique" && git push
-```
-
-Ensuite, dans **Settings → Pages**, choisis la source « GitHub Actions ».
+Elle build le site, l'envoie sur le VPS (rsync) et redémarre le relais.
+Installation du serveur, architecture et dépannage : voir
+[deploy/README.md](deploy/README.md).
 
 ## Crédits photos
 

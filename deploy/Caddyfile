@@ -1,0 +1,46 @@
+# Caddy — Attrape Moi Si Tu Booth
+# Emplacement sur le VPS : /etc/caddy/Caddyfile
+# Caddy obtient et renouvelle automatiquement le certificat HTTPS (Let's Encrypt).
+
+{
+	email attrape.moisi.tubooth@outlook.com
+}
+
+attrapemoisitubooth.fr {
+	encode zstd gzip
+
+	# Relais du formulaire de contact (service Node local, non exposé)
+	handle /api/* {
+		reverse_proxy 127.0.0.1:3000
+	}
+
+	# Site statique (build Astro)
+	handle {
+		root * /var/www/attrapemoisitubooth
+		file_server
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		-Server
+	}
+
+	# Fichiers versionnés par Astro (nom contenant un hash) : cache long
+	@immutable path /_astro/*
+	header @immutable Cache-Control "public, max-age=31536000, immutable"
+
+	log {
+		output file /var/log/caddy/attrapemoisitubooth.log {
+			roll_size 10MiB
+			roll_keep 5
+		}
+	}
+}
+
+www.attrapemoisitubooth.fr {
+	redir https://attrapemoisitubooth.fr{uri} permanent
+}

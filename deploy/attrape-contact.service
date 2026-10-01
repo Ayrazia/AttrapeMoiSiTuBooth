@@ -1,0 +1,40 @@
+# Relais du formulaire de contact — service systemd
+# Emplacement sur le VPS : /etc/systemd/system/attrape-contact.service
+
+[Unit]
+Description=Attrape Moi Si Tu Booth - relais du formulaire de contact
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=attrape
+Group=attrape
+WorkingDirectory=/opt/attrape-contact
+# Secrets (SMTP Brevo…) : fichier root, droits 600, jamais dans Git
+EnvironmentFile=/etc/attrape-contact.env
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+RestartSec=5
+
+# Durcissement
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+LockPersonality=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX AF_NETLINK
+CapabilityBoundingSet=
+AmbientCapabilities=
+
+[Install]
+WantedBy=multi-user.target

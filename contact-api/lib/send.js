@@ -1,7 +1,8 @@
 import nodemailer from 'nodemailer';
 
-// Origine autorisée (le site GitHub Pages). Modifiable via variable d'env.
-export const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://ayrazia.github.io';
+// Origine autorisée pour les appels cross-origin (le site lui-même est servi
+// par le même domaine, donc same-origin). Modifiable via variable d'env.
+export const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://attrapemoisitubooth.fr';
 
 export function escapeHtml(s = '') {
   return String(s).replace(

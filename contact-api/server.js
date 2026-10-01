@@ -5,6 +5,9 @@ import http from 'node:http';
 import { sendContactMail, ALLOWED_ORIGIN } from './lib/send.js';
 
 const PORT = Number(process.env.PORT || 3000);
+// 127.0.0.1 = joignable uniquement depuis le serveur (derrière Caddy).
+// Mettre HOST=0.0.0.0 sur une plateforme type Render/Railway.
+const HOST = process.env.HOST || '127.0.0.1';
 const ROUTE = '/api/contact';
 
 function cors(res) {
@@ -58,6 +61,6 @@ const server = http.createServer((req, res) => {
   });
 });
 
-server.listen(PORT, () => {
-  console.log(`Relais contact démarré sur le port ${PORT} (route POST ${ROUTE})`);
+server.listen(PORT, HOST, () => {
+  console.log(`Relais contact démarré sur ${HOST}:${PORT} (route POST ${ROUTE})`);
 });
