@@ -1,0 +1,70 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { contact, legal } from '../data/site.js';
+---
+
+<LegalLayout
+  heading="Conditions d'utilisation"
+  description="Conditions générales d'utilisation du site Attrape Moi Si Tu Booth."
+>
+  <h2>1. Objet</h2>
+  <p>
+    Les présentes conditions régissent l'utilisation du site vitrine
+    {legal.exploitant}. En naviguant sur ce site, vous acceptez ces conditions.
+  </p>
+
+  <h2>2. Accès au site</h2>
+  <p>
+    Le site est accessible gratuitement. {legal.exploitant} s'efforce d'en
+    assurer la disponibilité mais ne peut être tenu responsable d'une
+    interruption, momentanée ou non, liée à la maintenance, à une panne ou à des
+    causes extérieures.
+  </p>
+
+  <h2>3. Nature du site</h2>
+  <p>
+    Ce site est un site de présentation (vitrine). Les informations (prestations,
+    tarifs indicatifs, disponibilités) sont fournies à titre informatif et ne
+    constituent pas une offre contractuelle. Toute prestation fait l'objet d'un
+    devis et d'un accord spécifique.
+  </p>
+
+  <h2>4. Propriété intellectuelle</h2>
+  <p>
+    L'ensemble des contenus du site (textes, logo, photographies, graphismes) est
+    protégé. Toute reproduction ou utilisation sans autorisation écrite préalable
+    de {legal.exploitant} est interdite.
+  </p>
+
+  <h2>5. Responsabilité</h2>
+  <p>
+    {legal.exploitant} ne saurait être tenu responsable des dommages directs ou
+    indirects résultant de l'utilisation du site. L'utilisateur est seul
+    responsable de l'usage qu'il fait des informations qui y figurent.
+  </p>
+
+  <h2>6. Liens hypertextes</h2>
+  <p>
+    Le site peut contenir des liens vers d'autres sites (ex. Instagram).
+    {legal.exploitant} n'exerce aucun contrôle sur ces sites et décline toute
+    responsabilité quant à leur contenu.
+  </p>
+
+  <h2>7. Données personnelles</h2>
+  <p>
+    Le traitement des données transmises via le formulaire de contact est décrit
+    dans notre
+    <a href={`${import.meta.env.BASE_URL}confidentialite/`}>politique de confidentialité</a>.
+  </p>
+
+  <h2>8. Droit applicable</h2>
+  <p>
+    Les présentes conditions sont soumises au droit français. En cas de litige,
+    et à défaut de résolution amiable, les tribunaux français seront compétents.
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    Pour toute question : <a href={`mailto:${contact.email}`}>{contact.email}</a>.
+  </p>
+</LegalLayout>

@@ -21,6 +21,31 @@ export const contact = {
   formEndpoint: '',
 };
 
+// ============================================================
+//  Infos légales — À COMPLÉTER avec tes informations réelles.
+//  Tant que les champs entre [crochets] ne sont pas remplis, ils
+//  s'affichent tels quels sur les pages légales.
+// ============================================================
+export const legal = {
+  // Exploitant / éditeur du site
+  exploitant: 'Attrape Moi Si Tu Booth',
+  responsable: '[Prénom NOM du responsable de publication]',
+  statut: '[Statut juridique — ex. micro-entreprise / auto-entrepreneur]',
+  siret: '[Numéro SIRET]',
+  rcs: '', // ex. "RCS Orléans 123 456 789" — laisser vide si non applicable
+  tva: '', // n° TVA intracommunautaire — laisser vide si non assujetti (franchise en base)
+  adresse: '[Adresse]',
+  codePostalVille: '[Code postal et ville]',
+
+  // Hébergeur du site (GitHub Pages) — factuel, ne pas modifier sauf changement d'hébergeur
+  hebergeur: 'GitHub, Inc.',
+  hebergeurAdresse: '88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis',
+  hebergeurSite: 'https://pages.github.com',
+
+  // Date de dernière mise à jour des pages légales
+  updated: '1er octobre 2026',
+};
+
 // Prestations proposées
 export const services = [
   {
