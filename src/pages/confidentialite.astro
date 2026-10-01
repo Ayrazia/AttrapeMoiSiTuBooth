@@ -10,7 +10,8 @@ import { contact, legal } from '../data/site.js';
   <p>
     La présente politique explique comment {legal.exploitant} collecte et traite
     vos données personnelles lorsque vous utilisez ce site, conformément au
-    Règlement Général sur la Protection des Données (RGPD).
+    Règlement Général sur la Protection des Données (RGPD) et à la loi
+    Informatique et Libertés.
   </p>
 
   <h2>Responsable du traitement</h2>
@@ -31,45 +32,80 @@ import { contact, legal } from '../data/site.js';
     <li>Votre numéro de téléphone (facultatif)</li>
     <li>Le type et la date de votre événement (facultatif)</li>
     <li>Le contenu de votre message</li>
+    <li>Votre choix concernant la réception de nos offres (case à cocher)</li>
   </ul>
   <p>Aucune création de compte n'est requise et aucune donnée sensible n'est demandée.</p>
 
-  <h2>Finalité</h2>
+  <h2>Finalités et bases légales</h2>
+  <h3>1. Répondre à votre demande</h3>
   <p>
-    Ces données sont utilisées uniquement pour <strong>répondre à votre demande</strong>
-    (devis, renseignement, réservation) et assurer le suivi de notre relation.
-    Elles ne sont ni revendues, ni utilisées à des fins publicitaires.
+    Vos données sont utilisées pour traiter votre demande (devis, renseignement,
+    réservation) et assurer le suivi de notre échange.
+    <em>Base légale : mesures précontractuelles prises à votre demande (art. 6.1.b du RGPD).</em>
+  </p>
+  <h3>2. Vous envoyer nos offres et actualités (uniquement avec votre accord)</h3>
+  <p>
+    Si — et seulement si — vous avez coché la case prévue à cet effet, votre
+    adresse email peut être utilisée pour vous envoyer les offres et actualités
+    de {legal.exploitant}. Cette case est facultative et n'est jamais pré-cochée ;
+    ne pas la cocher n'a aucune incidence sur le traitement de votre demande.
+    <em>Base légale : votre consentement (art. 6.1.a du RGPD), que vous pouvez retirer à tout moment.</em>
+  </p>
+  <p>
+    Vos données ne sont <strong>jamais vendues, louées ni cédées</strong> à des
+    tiers, et ne sont utilisées que pour les offres de {legal.exploitant}.
   </p>
 
-  <h2>Base légale</h2>
+  <h2>Désinscription</h2>
   <p>
-    Le traitement repose sur votre consentement et sur les mesures
-    précontractuelles prises à votre demande (art. 6.1.a et 6.1.b du RGPD).
+    Chaque email d'information contient un <strong>lien de désinscription</strong>.
+    Vous pouvez aussi retirer votre consentement à tout moment en écrivant à
+    <a href={`mailto:${contact.email}`}>{contact.email}</a>. Le retrait est pris
+    en compte sans délai et ne remet pas en cause les envois antérieurs.
   </p>
 
   <h2>Destinataires et sous-traitants</h2>
-  <p>Vos données peuvent transiter par les prestataires techniques suivants :</p>
+  <p>
+    Seul {legal.exploitant} a accès à vos données. Elles transitent par les
+    prestataires techniques suivants, qui agissent uniquement sur nos instructions :
+  </p>
   <ul>
     <li>
-      <strong>Brevo</strong> (Sendinblue SAS) — acheminement des emails du
-      formulaire de contact.
+      <strong>Brevo</strong> (Sendinblue SAS, France) — acheminement des emails
+      du formulaire et, si vous avez accepté de recevoir nos offres, gestion de
+      la liste de diffusion.
     </li>
     <li>
-      L'<strong>hébergeur du site</strong> ({legal.hebergeur}) et l'hébergeur du
-      service de réception du formulaire, pour le fonctionnement technique.
+      <strong>{legal.relaisHebergeur}</strong> — hébergement du service qui
+      reçoit le formulaire et transmet votre message.
+    </li>
+    <li>
+      <strong>{legal.hebergeur}</strong> — hébergement du site.
     </li>
   </ul>
+
+  <h2>Transferts hors de l'Union européenne</h2>
   <p>
-    Seul {legal.exploitant} a accès au contenu de vos demandes pour y répondre.
+    Certains prestataires techniques (hébergement du site et du formulaire)
+    peuvent être situés aux États-Unis. Ces transferts sont encadrés par des
+    garanties appropriées : le cadre de protection des données UE–États-Unis
+    (Data Privacy Framework) et/ou les clauses contractuelles types de la
+    Commission européenne.
   </p>
 
   <h2>Durée de conservation</h2>
-  <p>
-    Vos données sont conservées le temps nécessaire au traitement de votre
-    demande, puis au maximum <strong>3 ans</strong> à compter de notre dernier
-    contact, à des fins de suivi commercial. Vous pouvez demander leur
-    suppression à tout moment.
-  </p>
+  <ul>
+    <li>
+      <strong>Demandes de contact</strong> : le temps nécessaire au traitement de
+      votre demande, puis au maximum <strong>3 ans</strong> à compter de notre
+      dernier échange.
+    </li>
+    <li>
+      <strong>Liste de diffusion</strong> : jusqu'à votre désinscription, et au
+      maximum <strong>3 ans</strong> à compter de votre consentement ou de votre
+      dernier contact avec nous.
+    </li>
+  </ul>
 
   <h2>Cookies et traceurs</h2>
   <p>
@@ -81,13 +117,16 @@ import { contact, legal } from '../data/site.js';
 
   <h2>Vos droits</h2>
   <p>
-    Conformément au RGPD, vous disposez d'un droit d'accès, de rectification,
-    d'effacement, de limitation, d'opposition et de portabilité de vos données.
-    Pour les exercer, écrivez-nous à
-    <a href={`mailto:${contact.email}`}>{contact.email}</a>.
+    Vous disposez d'un droit d'accès, de rectification, d'effacement, de
+    limitation, d'opposition et de portabilité de vos données, ainsi que du
+    droit de retirer votre consentement à tout moment et de définir des
+    directives sur le sort de vos données après votre décès. Pour les exercer,
+    écrivez-nous à <a href={`mailto:${contact.email}`}>{contact.email}</a>.
+    Nous répondons dans un délai d'un mois.
   </p>
   <p>
-    Vous pouvez également introduire une réclamation auprès de la CNIL
+    Si vous estimez que vos droits ne sont pas respectés, vous pouvez introduire
+    une réclamation auprès de la CNIL
     (<a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>).
   </p>
 </LegalLayout>

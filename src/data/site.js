@@ -41,6 +41,14 @@ export const legal = {
   hebergeur: 'GitHub, Inc.',
   hebergeurAdresse: '88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis',
   hebergeurSite: 'https://pages.github.com',
+  hebergeurTel: "[Téléphone de l'hébergeur — à vérifier sur github.com/contact]",
+
+  // Hébergeur du relais du formulaire de contact (une fois choisi)
+  relaisHebergeur: '[Hébergeur du formulaire — ex. Render, Netlify ou Vercel]',
+
+  // Médiateur de la consommation (obligatoire si tu vends à des particuliers)
+  mediateur: '[Nom du médiateur de la consommation]',
+  mediateurSite: '', // ex. 'https://www.cm2c.net'
 
   // Date de dernière mise à jour des pages légales
   updated: '1er octobre 2026',

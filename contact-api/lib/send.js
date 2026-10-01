@@ -16,8 +16,33 @@ export function escapeHtml(s = '') {
  * @param {Record<string, string>} body
  * @returns {Promise<{ok: true, skipped?: boolean}>}
  */
+/**
+ * (Optionnel) Ajoute le contact à une liste Brevo — uniquement s'il a donné
+ * son consentement à la prospection. Inactif si BREVO_API_KEY / BREVO_LIST_ID
+ * ne sont pas définis.
+ */
+async function addToBrevoList(email) {
+  const apiKey = process.env.BREVO_API_KEY;
+  const listId = Number(process.env.BREVO_LIST_ID);
+  if (!apiKey || !listId) return;
+
+  const res = await fetch('https://api.brevo.com/v3/contacts', {
+    method: 'POST',
+    headers: {
+      'api-key': apiKey,
+      'Content-Type': 'application/json',
+      accept: 'application/json',
+    },
+    body: JSON.stringify({ email, listIds: [listId], updateEnabled: true }),
+  });
+  if (!res.ok) {
+    throw new Error(`Brevo contacts ${res.status}: ${await res.text()}`);
+  }
+}
+
 export async function sendContactMail(body = {}) {
   const { name, email, phone, event, date, message, company } = body;
+  const marketing = body.marketing === 'oui';
 
   // Anti-spam : le champ "company" est un piège (honeypot). Si rempli → bot.
   if (company) return { ok: true, skipped: true };
@@ -55,6 +80,7 @@ export async function sendContactMail(body = {}) {
     phone ? `Téléphone : ${phone}` : null,
     event ? `Type d'événement : ${event}` : null,
     date ? `Date souhaitée : ${date}` : null,
+    `Accepte de recevoir les offres : ${marketing ? 'OUI' : 'non'}`,
     '',
     'Message :',
     message,
@@ -73,10 +99,18 @@ export async function sendContactMail(body = {}) {
       ${phone ? `<p style="margin:4px 0"><strong>Téléphone :</strong> ${escapeHtml(phone)}</p>` : ''}
       ${event ? `<p style="margin:4px 0"><strong>Type d'événement :</strong> ${escapeHtml(event)}</p>` : ''}
       ${date ? `<p style="margin:4px 0"><strong>Date souhaitée :</strong> ${escapeHtml(date)}</p>` : ''}
+      <p style="margin:4px 0"><strong>Accepte de recevoir les offres :</strong> ${marketing ? '✅ Oui' : 'Non'}</p>
       <p style="margin:12px 0 4px"><strong>Message :</strong></p>
       <p style="margin:0;white-space:pre-wrap">${escapeHtml(message)}</p>
     </div>`,
   });
+
+  // L'ajout à la liste ne doit jamais faire échouer l'envoi de la demande
+  if (marketing) {
+    await addToBrevoList(email).catch((err) =>
+      console.error('Ajout liste Brevo impossible :', err.message)
+    );
+  }
 
   return { ok: true };
 }

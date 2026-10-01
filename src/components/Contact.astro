@@ -5,6 +5,7 @@ import Icon from './Icon.astro';
 // Endpoint du relais mail : variable d'env (PUBLIC_CONTACT_ENDPOINT) sinon
 // la valeur dans site.js. Vide → repli sur un lien mailto.
 const endpoint = import.meta.env.PUBLIC_CONTACT_ENDPOINT || contact.formEndpoint || '';
+const base = import.meta.env.BASE_URL;
 ---
 
 <section class="section contact" id="contact">
@@ -90,6 +91,15 @@ const endpoint = import.meta.env.PUBLIC_CONTACT_ENDPOINT || contact.formEndpoint
             <textarea id="message" name="message" rows="4" placeholder="Parlez-nous de votre projet…"></textarea>
           </div>
 
+          {/* Consentement prospection : facultatif, jamais pré-coché (RGPD / CNIL) */}
+          <label class="consent">
+            <input type="checkbox" name="marketing" value="oui" />
+            <span>
+              J'accepte de recevoir par email les offres et actualités
+              d'Attrape Moi Si Tu Booth. Désinscription possible à tout moment.
+            </span>
+          </label>
+
           {/* Champ piège anti-spam — ne pas remplir (masqué aux visiteurs) */}
           <input
             type="text"
@@ -104,6 +114,11 @@ const endpoint = import.meta.env.PUBLIC_CONTACT_ENDPOINT || contact.formEndpoint
             Envoyer ma demande
           </button>
           <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+          <p class="form-legal">
+            Vos données servent à répondre à votre demande. Pour en savoir plus et
+            exercer vos droits, consultez notre
+            <a href={`${base}confidentialite/`}>politique de confidentialité</a>.
+          </p>
         </form>
       </div>
     </div>
@@ -231,6 +246,39 @@ const endpoint = import.meta.env.PUBLIC_CONTACT_ENDPOINT || contact.formEndpoint
     cursor: default;
   }
 
+  .consent {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    font-size: 0.86rem;
+    font-weight: 500;
+    line-height: 1.45;
+    color: var(--texte-doux);
+    cursor: pointer;
+  }
+
+  .consent input {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin: 0.1rem 0 0;
+    padding: 0;
+    accent-color: var(--or);
+    cursor: pointer;
+  }
+
+  .form-legal {
+    font-size: 0.78rem;
+    line-height: 1.5;
+    color: var(--texte-doux);
+    margin: 0;
+  }
+
+  .form-legal a {
+    color: var(--or);
+    text-decoration: underline;
+  }
+
   /* Champ piège anti-spam : invisible pour les humains */
   .hp-field {
     position: absolute;
@@ -284,6 +332,8 @@ const endpoint = import.meta.env.PUBLIC_CONTACT_ENDPOINT || contact.formEndpoint
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const data = Object.fromEntries(new FormData(form).entries());
+      // Case non cochée = absente du FormData → on l'explicite
+      data.marketing = data.marketing === 'oui' ? 'oui' : 'non';
 
       if (!data.name || !data.email || !data.message) {
         setStatus("Merci d'indiquer au minimum votre nom, votre email et un message.", 'err');
@@ -295,7 +345,8 @@ const endpoint = import.meta.env.PUBLIC_CONTACT_ENDPOINT || contact.formEndpoint
         const body = encodeURIComponent(
           `Nom : ${data.name}\nEmail : ${data.email}\n` +
             `Téléphone : ${data.phone || '-'}\nType : ${data.event || '-'}\n` +
-            `Date : ${data.date || '-'}\n\n${data.message}`
+            `Date : ${data.date || '-'}\n` +
+            `Accepte de recevoir les offres : ${data.marketing}\n\n${data.message}`
         );
         const subject = encodeURIComponent(`Demande — ${data.event || 'Contact'} — ${data.name}`);
         window.location.href = `mailto:${mailtoAddr}?subject=${subject}&body=${body}`;

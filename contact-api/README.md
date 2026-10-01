@@ -19,6 +19,13 @@ Toujours les mêmes, quel que soit l'hébergement (voir **`.env.dist`**) :
 | `CONTACT_FROM` | un **expéditeur vérifié** dans Brevo (Expéditeurs, domaines & IP) |
 | `ALLOWED_ORIGIN` | `https://ayrazia.github.io` |
 | `PORT` | *(serveur autonome uniquement, ex. 3000)* |
+| `BREVO_API_KEY` | *(optionnel)* clé API Brevo — pour ajouter automatiquement à une liste les personnes qui acceptent les offres |
+| `BREVO_LIST_ID` | *(optionnel)* ID de la liste Brevo de prospection |
+
+> Les personnes qui cochent « offres et actualités » sont signalées dans le mail
+> reçu (« Accepte de recevoir les offres : OUI »). Avec `BREVO_API_KEY` et
+> `BREVO_LIST_ID`, elles sont aussi ajoutées automatiquement à ta liste Brevo.
+> Seuls ces contacts-là peuvent recevoir de la prospection.
 
 ## Choisis UN hébergement
 
