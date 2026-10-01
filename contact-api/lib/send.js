@@ -1,22 +1,23 @@
 import nodemailer from 'nodemailer';
+import { renderNotification } from './template.js';
 
 // Origine autorisée pour les appels cross-origin (le site lui-même est servi
 // par le même domaine, donc same-origin). Modifiable via variable d'env.
 export const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://attrapemoisitubooth.fr';
 
-export function escapeHtml(s = '') {
-  return String(s).replace(
-    /[&<>"']/g,
-    (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])
-  );
+const EMAIL_RE = /^[^\s@<>"'?&,;]+@[^\s@<>"'?&,;]+\.[a-z]{2,}$/i;
+
+function badRequest(message) {
+  const err = new Error(message);
+  err.status = 400;
+  return err;
 }
 
-/**
- * Valide les données du formulaire et envoie l'email via le SMTP Brevo.
- * En cas de données invalides, lève une erreur avec `.status = 400`.
- * @param {Record<string, string>} body
- * @returns {Promise<{ok: true, skipped?: boolean}>}
- */
+/** Champ sur une ligne : sans retour à la ligne (anti-injection d'en-têtes), tronqué. */
+const oneLine = (v, max) => String(v ?? '').replace(/[\r\n\t]+/g, ' ').trim().slice(0, max);
+/** Champ multiligne (message), tronqué. */
+const multiLine = (v, max) => String(v ?? '').replace(/\r\n?/g, '\n').trim().slice(0, max);
+
 /**
  * (Optionnel) Ajoute le contact à une liste Brevo — uniquement s'il a donné
  * son consentement à la prospection. Inactif si BREVO_API_KEY / BREVO_LIST_ID
@@ -41,22 +42,31 @@ async function addToBrevoList(email) {
   }
 }
 
+/**
+ * Valide les données du formulaire et envoie l'email via le SMTP Brevo.
+ * En cas de données invalides, lève une erreur avec `.status = 400`.
+ * @param {Record<string, string>} body
+ * @returns {Promise<{ok: true, skipped?: boolean}>}
+ */
 export async function sendContactMail(body = {}) {
-  const { name, email, phone, event, date, message, company } = body;
-  const marketing = body.marketing === 'oui';
-
   // Anti-spam : le champ "company" est un piège (honeypot). Si rempli → bot.
-  if (company) return { ok: true, skipped: true };
+  if (body.company) return { ok: true, skipped: true };
 
-  if (!name || !email || !message) {
-    const err = new Error('Champs requis manquants.');
-    err.status = 400;
-    throw err;
+  const data = {
+    name: oneLine(body.name, 100),
+    email: oneLine(body.email, 254),
+    phone: oneLine(body.phone, 30),
+    event: oneLine(body.event, 60),
+    date: oneLine(body.date, 10),
+    message: multiLine(body.message, 5000),
+    marketing: body.marketing === 'oui',
+  };
+
+  if (!data.name || !data.email || !data.message) {
+    throw badRequest('Champs requis manquants.');
   }
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-    const err = new Error('Adresse email invalide.');
-    err.status = 400;
-    throw err;
+  if (!EMAIL_RE.test(data.email)) {
+    throw badRequest('Adresse email invalide.');
   }
 
   const transporter = nodemailer.createTransport({
@@ -69,46 +79,22 @@ export async function sendContactMail(body = {}) {
     },
   });
 
-  const to = process.env.CONTACT_TO;
-  // Doit être un expéditeur VÉRIFIÉ dans Brevo
+  // Expéditeur : adresse du domaine authentifié dans Brevo
   const from = process.env.CONTACT_FROM || process.env.CONTACT_TO;
-
-  const subject = `Nouvelle demande — ${event || 'Contact'} — ${name}`;
-
-  const textLines = [
-    `Nom : ${name}`,
-    `Email : ${email}`,
-    phone ? `Téléphone : ${phone}` : null,
-    event ? `Type d'événement : ${event}` : null,
-    date ? `Date souhaitée : ${date}` : null,
-    `Accepte de recevoir les offres : ${marketing ? 'OUI' : 'non'}`,
-    '',
-    'Message :',
-    message,
-  ].filter((l) => l !== null);
+  const { subject, html, text } = renderNotification(data);
 
   await transporter.sendMail({
-    from: `Attrape Moi Si Tu Booth <${from}>`,
-    to,
-    replyTo: `${name} <${email}>`,
+    from: { name: 'Attrape Moi Si Tu Booth', address: from },
+    to: process.env.CONTACT_TO,
+    replyTo: { name: data.name, address: data.email },
     subject,
-    text: textLines.join('\n'),
-    html: `<div style="font-family:Arial,sans-serif;font-size:15px;color:#201e1b;line-height:1.6">
-      <h2 style="color:#0e0d0c;margin:0 0 12px">Nouvelle demande de contact</h2>
-      <p style="margin:4px 0"><strong>Nom :</strong> ${escapeHtml(name)}</p>
-      <p style="margin:4px 0"><strong>Email :</strong> ${escapeHtml(email)}</p>
-      ${phone ? `<p style="margin:4px 0"><strong>Téléphone :</strong> ${escapeHtml(phone)}</p>` : ''}
-      ${event ? `<p style="margin:4px 0"><strong>Type d'événement :</strong> ${escapeHtml(event)}</p>` : ''}
-      ${date ? `<p style="margin:4px 0"><strong>Date souhaitée :</strong> ${escapeHtml(date)}</p>` : ''}
-      <p style="margin:4px 0"><strong>Accepte de recevoir les offres :</strong> ${marketing ? '✅ Oui' : 'Non'}</p>
-      <p style="margin:12px 0 4px"><strong>Message :</strong></p>
-      <p style="margin:0;white-space:pre-wrap">${escapeHtml(message)}</p>
-    </div>`,
+    text,
+    html,
   });
 
   // L'ajout à la liste ne doit jamais faire échouer l'envoi de la demande
-  if (marketing) {
-    await addToBrevoList(email).catch((err) =>
+  if (data.marketing) {
+    await addToBrevoList(data.email).catch((err) =>
       console.error('Ajout liste Brevo impossible :', err.message)
     );
   }
