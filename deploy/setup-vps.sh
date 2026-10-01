@@ -19,7 +19,7 @@ apt-get update -q
 apt-get -y -q upgrade
 
 echo "▶ Paquets (Caddy, Node.js, pare-feu, mises à jour auto)…"
-apt-get install -y -q caddy nodejs npm rsync ufw unattended-upgrades fail2ban
+apt-get install -y -q --no-install-recommends caddy nodejs npm rsync ufw unattended-upgrades fail2ban
 
 echo "▶ Pare-feu (SSH, HTTP, HTTPS uniquement)…"
 ufw allow OpenSSH >/dev/null
